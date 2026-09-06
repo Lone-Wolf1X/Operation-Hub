@@ -1,0 +1,121 @@
+<div class="p-8 max-w-7xl mx-auto relative">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800 tracking-tight">User Management</h1>
+      <p class="text-sm text-gray-500 mt-1">Manage system administrators, makers, and checkers across all branches.</p>
+    </div>
+    <button (click)="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium text-sm transition shadow-sm flex items-center">
+      <span class="mr-2 font-bold text-lg leading-none">+</span> New User
+    </button>
+  </div>
+
+  <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <table class="w-full text-left border-collapse">
+      <thead class="bg-gray-50 border-b border-gray-200">
+        <tr class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          <th class="px-6 py-4">Name & Email</th>
+          <th class="px-6 py-4">Staff ID</th>
+          <th class="px-6 py-4">Role</th>
+          <th class="px-6 py-4">Tenant (Branch)</th>
+          <th class="px-6 py-4 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr *ngFor="let user of users" class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4">
+            <p class="text-sm font-bold text-gray-900">{{ user.name }}</p>
+            <p class="text-sm text-gray-500">{{ user.email }}</p>
+          </td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-600">{{ user.staff_id || 'N/A' }}</td>
+          <td class="px-6 py-4">
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold border"
+              [ngClass]="{
+                'bg-purple-100 text-purple-800 border-purple-200': user.role === 'admin',
+                'bg-blue-100 text-blue-800 border-blue-200': user.role === 'maker',
+                'bg-emerald-100 text-emerald-800 border-emerald-200': user.role === 'checker'
+              }">
+              {{ user.role | uppercase }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-600">{{ user.tenant_id }}</td>
+          <td class="px-6 py-4 text-right space-x-4">
+            <button (click)="openModal(user)" class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition">Edit / Reset Pwd</button>
+            <button (click)="deleteUser(user.id)" class="text-sm font-semibold text-red-600 hover:text-red-800 transition">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="users.length === 0">
+          <td colspan="5" class="px-6 py-12 text-center text-gray-500 font-medium">No users found. Ensure your backend is running.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Animated Modal Overlay -->
+  <div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-60 backdrop-blur-sm transition-opacity overflow-y-auto pt-10 pb-10">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all my-auto">
+      <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+        <h3 class="text-lg font-bold text-gray-800">{{ editingUser ? 'Update Existing User' : 'Register New User' }}</h3>
+        <button (click)="closeModal()" class="text-gray-400 hover:text-gray-800 text-2xl font-bold leading-none">&times;</button>
+      </div>
+      <div class="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+        
+        <h4 class="text-sm font-bold text-blue-800 uppercase tracking-wide border-b pb-2">Account Details</h4>
+        <div class="grid grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1.5">Full Name</label>
+            <input [(ngModel)]="formData.name" type="text" placeholder="John Doe" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1.5">Email Address</label>
+            <input [(ngModel)]="formData.email" type="email" placeholder="john@bank.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1.5">System Role</label>
+            <select [(ngModel)]="formData.role" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition bg-white">
+              <option value="admin">Admin (System)</option>
+              <option value="maker">Maker (Data Entry)</option>
+              <option value="checker">Checker (Approver)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1.5">Tenant Identifier</label>
+            <input [(ngModel)]="formData.tenant_id" type="text" placeholder="e.g. bank_a" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold text-gray-700 mb-1.5">Password <span class="font-normal text-red-500">{{ editingUser ? '(Admin Only: Enter to Reset Password)' : '(Required for new user)' }}</span></label>
+          <input [(ngModel)]="formData.password" type="password" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition">
+        </div>
+
+        <h4 class="text-sm font-bold text-blue-800 uppercase tracking-wide border-b pb-2 pt-4">Profile Information</h4>
+        <div class="grid grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1.5">Staff ID</label>
+            <input [(ngModel)]="formData.staff_id" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1.5">Contact Number</label>
+            <input [(ngModel)]="formData.contact_number" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1.5">Branch</label>
+            <input [(ngModel)]="formData.branch" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1.5">Branch SOL</label>
+            <input [(ngModel)]="formData.branch_sol" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition">
+          </div>
+        </div>
+
+      </div>
+      <div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3 bg-gray-50">
+        <button (click)="closeModal()" class="px-5 py-2 text-sm font-bold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition">Cancel</button>
+        <button (click)="saveUser()" class="px-5 py-2 text-sm font-bold text-white bg-blue-600 border border-transparent rounded-lg shadow-sm hover:bg-blue-700 transition">Save User</button>
+      </div>
+    </div>
+  </div>
+</div>

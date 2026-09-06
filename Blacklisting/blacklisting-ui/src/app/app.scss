@@ -1,0 +1,47 @@
+/* ─────────────────────────────────────────────────────────────────────────
+ * Global Styles — Operation HUB Blacklisting
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+
+/* Preeti Font (Nepali Legacy Font for input fields and reports)
+ * Place Preeti.ttf inside src/assets/fonts/
+ * Download from: https://github.com/Shuvayatra/preeti-unicode-convertor
+ * OR copy from existing Windows Fonts folder (C:\Windows\Fonts\Preeti.ttf)
+ */
+@font-face {
+  font-family: 'Preeti';
+  src: url('/assets/fonts/Preeti.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Utility class for any inline Preeti display */
+.preeti-text {
+  font-family: 'Preeti', serif !important;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Preeti input field base style (applied by [preetiInput] directive) */
+input[style*="Preeti"],
+textarea[style*="Preeti"] {
+  font-family: 'Preeti', serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+/* Helper badge for Preeti input label */
+.preeti-input-badge::after {
+  content: 'प्रिती';
+  font-family: 'Preeti', serif;
+  font-size: 0.65rem;
+  background: #ede9fe;
+  color: #7c3aed;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  margin-left: 6px;
+  font-weight: 600;
+  vertical-align: middle;
+}

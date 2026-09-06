@@ -1,0 +1,51 @@
+<div class="p-8 w-full space-y-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">CIB Hit Report</h1>
+    <p class="text-gray-500 mt-1">Search results for: <span class="font-semibold text-gray-800">"{{ searchQuery }}"</span></p>
+  </div>
+
+  <div *ngIf="isSearching" class="flex justify-center p-12">
+    <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+  </div>
+
+  <div *ngIf="!isSearching && hasSearched && results.length === 0" class="bg-white rounded-xl border border-gray-200 p-12 text-center shadow-sm">
+    <svg class="mx-auto h-12 w-12 text-green-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <h3 class="text-lg font-bold text-gray-900">No Blacklist Hit Found</h3>
+    <p class="text-gray-500 mt-2">The entity "{{ searchQuery }}" does not appear in the current CIB blacklisting database. Proceed with caution as per standard guidelines.</p>
+  </div>
+
+  <div *ngIf="!isSearching && results.length > 0" class="space-y-6">
+    <div *ngFor="let hit of results" class="bg-white rounded-xl shadow-sm border p-6 flex flex-col md:flex-row justify-between items-start md:items-center"
+         [ngClass]="{'border-red-300 bg-red-50': hit.status === 'Blacklisted', 'border-green-300 bg-green-50': hit.status === 'Released'}">
+      
+      <div class="flex items-start">
+        <div class="mt-1 mr-4">
+          <svg *ngIf="hit.status === 'Blacklisted'" class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+          <svg *ngIf="hit.status === 'Released'" class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-gray-900">{{ hit.name }}</h2>
+          <div class="flex items-center space-x-4 mt-2">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium" 
+                  [ngClass]="{'bg-red-200 text-red-800': hit.status === 'Blacklisted', 'bg-green-200 text-green-800': hit.status === 'Released'}">
+              {{ hit.status }}
+            </span>
+            <span class="text-sm text-gray-600 font-medium">Type: {{ hit.entity_type }}</span>
+            <span class="text-sm text-gray-500" *ngIf="hit.cib_date">Date: {{ hit.cib_date }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-4 md:mt-0">
+        <button class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 shadow-sm transition">
+          View Full Details
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

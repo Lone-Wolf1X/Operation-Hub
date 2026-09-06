@@ -1,0 +1,44 @@
+<div class="p-6">
+  <div class="bg-white shadow rounded-lg p-6 max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800">CIB Blacklist Data Upload</h2>
+    
+    <!-- Bulletin -->
+    <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+      <h3 class="font-semibold text-blue-800">System Bulletin</h3>
+      <p class="text-sm text-blue-600 mt-1">
+        Last CIB Data Uploaded on: 
+        <span class="font-bold">{{ lastUploadDate ? (lastUploadDate | date:'medium') : 'No data uploaded yet' }}</span>
+      </p>
+      <p class="text-xs text-blue-500 mt-2">
+        Note: Uploading new data will update existing matches based on blacklist number. Any entity not present in the new Excel sheet will be automatically released from the system.
+      </p>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Entity Type</label>
+        <select [(ngModel)]="entityType" class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+          <option value="individual">Individual</option>
+          <option value="institutional">Institutional</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Excel File (.xlsx, .csv)</label>
+        <input type="file" accept=".xlsx, .csv" (change)="onFileSelected($event)" 
+               class="w-full border-gray-300 rounded-md shadow-sm p-2 border">
+      </div>
+
+      <button (click)="uploadFile()" [disabled]="!selectedFile || isUploading"
+              class="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 disabled:opacity-50">
+        {{ isUploading ? 'Uploading & Syncing...' : 'Upload Data' }}
+      </button>
+
+      <div *ngIf="uploadMessage" class="mt-4 p-3 rounded" 
+           [ngClass]="{'bg-green-100 text-green-800': uploadMessage.includes('successful'), 'bg-red-100 text-red-800': !uploadMessage.includes('successful')}">
+        {{ uploadMessage }}
+      </div>
+    </div>
+  </div>
+</div>

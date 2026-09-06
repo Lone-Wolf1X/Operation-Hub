@@ -1,0 +1,79 @@
+<div class="p-8 w-full space-y-8">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Welcome back!</h1>
+      <p class="text-gray-500 mt-1">Here is the latest overview of the CIB Blacklisting data.</p>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+      <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Individuals</span>
+      <span class="text-3xl font-bold text-gray-900 mt-2">{{ stats.individuals }}</span>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+      <span class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Units</span>
+      <span class="text-3xl font-bold text-gray-900 mt-2">{{ stats.units }}</span>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+      <span class="text-sm font-semibold text-red-500 uppercase tracking-wider">Currently Blacklisted</span>
+      <span class="text-3xl font-bold text-red-600 mt-2">{{ stats.blacklisted }}</span>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+      <span class="text-sm font-semibold text-green-500 uppercase tracking-wider">Released Entities</span>
+      <span class="text-3xl font-bold text-green-600 mt-2">{{ stats.released }}</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Chart Section -->
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">Blacklisted Entities: Individuals vs Units</h2>
+      <div class="h-80 flex justify-center items-center">
+        <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">Quick Actions</h2>
+      <p class="text-sm text-gray-500 mb-6 flex-1">Access essential Blacklisting tools directly from here.</p>
+      
+      <div class="space-y-4">
+        <!-- Screening Card -->
+        <a routerLink="/admin/screening" class="block border border-gray-200 rounded-lg p-4 hover:border-indigo-400 hover:shadow-md transition cursor-pointer group">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-md font-bold text-gray-800 group-hover:text-indigo-600">Run CIB Screening</h3>
+              <p class="text-xs text-gray-500">Search for Individuals or Institutions</p>
+            </div>
+          </div>
+        </a>
+
+        <!-- Upload CIB Card -->
+        <a routerLink="/admin/cib-upload" class="block border border-gray-200 rounded-lg p-4 hover:border-blue-400 hover:shadow-md transition cursor-pointer group">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-md font-bold text-gray-800 group-hover:text-blue-600">Upload CIB Data</h3>
+              <p class="text-xs text-gray-500">Upload the daily Excel file</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,153 @@
+<div class="p-6 w-full space-y-6">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Maker Workspace</h1>
+      <p class="text-slate-500 text-sm mt-1">CIB Blacklisting overview and case management</p>
+    </div>
+    <a routerLink="/admin/lodge-case"
+       class="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow hover:bg-indigo-700 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+      Lodge New Case
+    </a>
+  </div>
+
+  <!-- Real-time Stats Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0">
+        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+      </div>
+      <div>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Lodged</p>
+        <p class="text-3xl font-bold text-slate-900 mt-0.5">{{ stats.total_cases }}</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+      </div>
+      <div>
+        <p class="text-xs font-semibold text-amber-500 uppercase tracking-wider">Draft Cases</p>
+        <p class="text-3xl font-bold text-amber-600 mt-0.5">{{ stats.drafts }}</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      </div>
+      <div>
+        <p class="text-xs font-semibold text-blue-500 uppercase tracking-wider">Active Notice</p>
+        <p class="text-3xl font-bold text-blue-600 mt-0.5">{{ stats.active_notice }}</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+      </div>
+      <div>
+        <p class="text-xs font-semibold text-red-400 uppercase tracking-wider">Blacklisted</p>
+        <p class="text-3xl font-bold text-red-600 mt-0.5">{{ stats.blacklisted }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+    <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-base font-bold text-slate-800">CIB Entity Breakdown</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Individuals vs Institutional blacklisted</p>
+        </div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-full">
+          <span class="w-2 h-2 bg-indigo-500 rounded-full animate-ping"></span>
+          Live Data
+        </span>
+      </div>
+      <div class="h-64">
+        <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+      <div class="mb-5">
+        <h2 class="text-base font-bold text-slate-800">Distribution</h2>
+        <p class="text-xs text-slate-400 mt-0.5">CIB data composition</p>
+      </div>
+      <div class="h-64">
+        <canvas baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          [type]="pieChartType">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real Lodged Cases Table -->
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+      <div>
+        <h2 class="text-base font-bold text-slate-800">My Lodged Cases & Applications</h2>
+        <p class="text-xs text-slate-400 mt-0.5">Real-time cases fetched from database</p>
+      </div>
+      <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">{{ recentApplications.length }} Total</span>
+    </div>
+    
+    <div *ngIf="loading" class="py-12 text-center text-slate-400 text-sm">
+      Loading real cases...
+    </div>
+
+    <div *ngIf="!loading && recentApplications.length === 0" class="py-12 text-center text-slate-400 text-sm">
+      No cases lodged yet. Click "Lodge New Case" to create one.
+    </div>
+
+    <div *ngIf="!loading && recentApplications.length > 0" class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="text-xs text-slate-400 uppercase tracking-wider border-b border-slate-100 bg-slate-50">
+            <th class="py-3 px-6 font-semibold">Application #</th>
+            <th class="py-3 px-6 font-semibold">Applicant Name</th>
+            <th class="py-3 px-6 font-semibold">Status</th>
+            <th class="py-3 px-6 font-semibold">Created Date</th>
+            <th class="py-3 px-6 font-semibold text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-50 text-sm">
+          <tr *ngFor="let app of recentApplications" class="hover:bg-slate-50 transition">
+            <td class="py-3.5 px-6 font-bold font-mono text-indigo-600">
+              {{ app.application_number }}
+            </td>
+            <td class="py-3.5 px-6 text-slate-800 font-medium">
+              {{ app.applicant?.name_english || '—' }}
+            </td>
+            <td class="py-3.5 px-6">
+              <span [class]="getStatusClass(app.status)" class="px-2.5 py-1 rounded-full text-xs font-semibold capitalize">
+                {{ formatStatus(app.status) }}
+              </span>
+            </td>
+            <td class="py-3.5 px-6 text-slate-500 text-xs">
+              {{ app.created_at | date:'dd MMM yyyy, hh:mm a' }}
+            </td>
+            <td class="py-3.5 px-6 text-right">
+              <button (click)="openCase(app.id)"
+                class="inline-flex items-center gap-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                Open Workspace →
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

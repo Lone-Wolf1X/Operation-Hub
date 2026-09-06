@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nepali Date Converter</title>
+    <!-- Use Inter font for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Favicon placeholder to prevent 404 -->
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            /* Indigo 500 */
+            --primary-hover: #4f46e5;
+            /* Indigo 600 */
+            --secondary: #ec4899;
+            /* Pink 500 */
+            --background-gradient: linear-gradient(135deg, #a78bfa 0%, #3b82f6 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --input-bg: rgba(255, 255, 255, 0.7);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-main);
+            overflow: hidden;
+            /* Prevent scroll if not needed */
+        }
+
+        /* Ambient background shapes for more depth */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 40%;
+            height: 40%;
+            background: rgba(236, 72, 153, 0.4);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 40%;
+            height: 40%;
+            background: rgba(99, 102, 241, 0.4);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: float 12s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(20px, 20px);
+            }
+        }
+
+        .container {
+            background: var(--glass-bg);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 480px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.025em;
+        }
+
+        /* Tabs Styling */
+        .tabs {
+            display: flex;
+            background: #f3f4f6;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+        }
+
+        /* Form Elements */
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-main);
+            font-size: 0.925rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--input-bg);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text-main);
+            font-family: inherit;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        input:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+        }
+
+        /* Custom styling for inputs to look better together */
+        #bs-year,
+        #bs-month,
+        #bs-day {
+            text-align: center;
+        }
+
+        button {
+            background: linear-gradient(to bottom right, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            letter-spacing: 0.01em;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Result Card */
+        .result {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(to right, #f8fafc, #f1f5f9);
+            border-radius: 12px;
+            text-align: center;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result strong {
+            display: block;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
+            animation: fadeOut 0.2s ease forwards;
+        }
+
+        .converter-section:not(.hidden) {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #debug-log {
+            font-size: 0.75rem;
+            color: #ef4444;
+            margin-top: 1rem;
+            text-align: center;
+            min-height: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Date Converter</h1>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('ad-to-bs')">AD to BS</div>
+            <div class="tab" onclick="switchTab('bs-to-ad')">BS to AD</div>
+        </div>
+
+        <!-- AD to BS Section -->
+        <div id="ad-to-bs-section" class="converter-section">
+            <label for="ad-date">English Date (AD)</label>
+            <div class="input-group">
+                <input type="date" id="ad-date">
+            </div>
+            <button onclick="convertADtoBS()">Convert to Nepali</button>
+            <div class="result" id="bs-result">Select a date to convert</div>
+        </div>
+
+        <!-- BS to AD Section -->
+        <div id="bs-to-ad-section" class="converter-section hidden">
+            <label for="bs-date">Nepali Date (BS)</label>
+            <div class="input-group">
+                <input type="text" id="bs-date" placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" maxlength="10">
+            </div>
+            <button onclick="convertBStoAD()">Convert to English</button>
+            <div class="result" id="ad-result">
+                <span>Enter BS date (YYYY-MM-DD) to convert</span>
+            </div>
+        </div>
+
+        <div id="debug-log"></div>
+    </div>
+
+
+    <script src="core.js"></script>
+    <script>
+        let Converter = null;
+
+        // Initialize checking for the library
+        window.onload = function () {
+            console.log("Window loaded. Checking for DateConverter...");
+
+            // The local core.js exposes "DateConverter" on window
+            if (typeof window.DateConverter !== 'undefined') {
+                Converter = window.DateConverter;
+            }
+
+            const debugEl = document.getElementById('debug-log');
+            if (!Converter) {
+                debugEl.textContent = "Error: Library not loaded correctly. Ensure core.js is in the same directory.";
+                console.error("Library not found.");
+            } else {
+                console.log("Library loaded successfully.");
+
+                // Set default date to today for AD input
+                document.getElementById('ad-date').valueAsDate = new Date();
+            }
+        };
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.converter-section').forEach(s => s.classList.add('hidden'));
+
+            if (tab === 'ad-to-bs') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('ad-to-bs-section').classList.remove('hidden');
+            } else {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('bs-to-ad-section').classList.remove('hidden');
+            }
+        }
+
+        function convertADtoBS() {
+            if (!Converter) {
+                alert("Library not loaded.");
+                return;
+            }
+
+            const adDateInput = document.getElementById('ad-date').value;
+            if (!adDateInput) {
+                document.getElementById('bs-result').innerHTML = "<span>Please select a date.</span>";
+                return;
+            }
+
+            try {
+                const dateObj = new Date(adDateInput);
+                const y = dateObj.getFullYear();
+                const m = dateObj.getMonth() + 1; // 1-based
+                const d = dateObj.getDate();
+
+                const converterInstance = new Converter(y, m, d);
+                const bsString = converterInstance.convertToBS().toBSString();
+
+                document.getElementById('bs-result').innerHTML = `<strong>${bsString}</strong><br><span>(BS)</span>`;
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('bs-result').textContent = "Error: " + e.message;
+            }
+        }
+
+        function convertBStoAD() {
+            if (!Converter) {
+                alert("Library not loaded.");
+                return;
+            }
+
+            const bsInput = document.getElementById('bs-date').value.trim();
+
+            // Allow separators like -, /, .
+            const parts = bsInput.split(/[-/.]/);
+
+            if (parts.length !== 3) {
+                document.getElementById('ad-result').innerHTML = "<span>Invalid Format. Use YYYY-MM-DD</span>";
+                return;
+            }
+
+            const year = parseInt(parts[0]);
+            const month = parseInt(parts[1]);
+            const day = parseInt(parts[2]);
+
+            if (isNaN(year) || isNaN(month) || isNaN(day)) {
+                document.getElementById('ad-result').innerHTML = "<span>Please enter valid BS Year, Month, and Day.</span>";
+                return;
+            }
+
+            try {
+                // Usage: DateConverter(y,m,d).convertToAD().toADString()
+                const converterInstance = new Converter(year, month, day);
+                const adString = converterInstance.convertToAD().toADString();
+
+                // Pad the output to YYYY-MM-DD
+                const [adY, adM, adD] = adString.split('-');
+                const paddedAndFormatted = `${adY}-${adM.padStart(2, '0')}-${adD.padStart(2, '0')}`;
+
+                document.getElementById('ad-result').innerHTML = `<strong>${paddedAndFormatted}</strong><br><span>(AD)</span>`;
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('ad-result').textContent = "Error: " + e.message;
+            }
+        }
+    </script>
+
+</body>
+
+</html>

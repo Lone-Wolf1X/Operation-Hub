@@ -1,0 +1,47 @@
+<div class="p-8 w-full space-y-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">My Profile</h1>
+    <p class="text-gray-500 mt-1">View your personal information and system access details.</p>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden max-w-3xl">
+    <div class="px-8 py-6 border-b border-gray-100 bg-gray-50 flex items-center space-x-6">
+      <div class="h-20 w-20 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold border-4 border-white shadow-md text-2xl uppercase">
+        {{ user?.name?.charAt(0) || 'U' }}
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">{{ user?.name || 'N/A' }}</h2>
+        <p class="text-blue-600 font-medium">{{ user?.role | titlecase }} - {{ user?.tenant_id || 'System' }}</p>
+      </div>
+    </div>
+    
+    <div class="p-8">
+      <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+          <dd class="mt-1 text-lg font-semibold text-gray-900">{{ user?.name || 'N/A' }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Email Address</dt>
+          <dd class="mt-1 text-lg font-semibold text-gray-900">{{ user?.email || 'N/A' }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Staff ID</dt>
+          <dd class="mt-1 text-lg font-semibold text-gray-900">{{ user?.staff_id || 'N/A' }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Contact Number</dt>
+          <dd class="mt-1 text-lg font-semibold text-gray-900">{{ user?.contact_number || 'N/A' }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Branch Name</dt>
+          <dd class="mt-1 text-lg font-semibold text-gray-900">{{ user?.branch || 'N/A' }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Branch SOL</dt>
+          <dd class="mt-1 text-lg font-semibold text-gray-900">{{ user?.branch_sol || 'N/A' }}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>

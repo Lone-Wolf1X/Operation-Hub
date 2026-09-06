@@ -1,0 +1,1451 @@
+
+<div class="container-fluid page-wrapper mt-4">
+
+    <!-- Loading & Errors -->
+    <div *ngIf="!applicationData && !errorMessage" class="d-flex justify-content-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert alert-success position-fixed top-0 end-0 m-3" style="z-index: 1050;">{{ successMessage }}</div>
+
+    <ng-container *ngIf="applicationData">
+    
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body bg-light rounded d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1 text-primary">Case Application Workspace</h4>
+                    <h2 class="mb-0">{{ applicationData?.application_number }}</h2>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-secondary fs-6 p-2 mb-2">{{ workflowState | uppercase }}</span>
+                </div>
+            </div>
+        </div>
+
+        <form [formGroup]="caseForm">
+
+            <!-- ================= PAYEE (APPLICANT) SECTION ================= -->
+            <div class="card main-card mb-4">
+                <div class="card-header-custom bg-white border-bottom pb-2 pt-3 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="section-title text-success m-0">1. Payee / Applicant Details</h5>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="toggleForm('payee')">
+                        {{ showPayeeForm ? '- Hide Details' : '+ Add Details' }}
+                    </button>
+                </div>
+                
+                <div class="card-body p-4 bg-white" formGroupName="payee">
+                    
+                    <!-- FORM SECTION -->
+                    <div *ngIf="showPayeeForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Entity Type</label>
+                            <select class="form-select w-25" formControlName="entity_type">
+                                <option value="individual">Individual</option>
+                                <option value="institutional">Institutional</option>
+                            </select>
+                        </div>
+                        
+                        <ng-container *ngIf="caseForm.get('payee.entity_type')?.value === 'individual'">
+                            
+
+                    <!-- ================= BASIC DETAILS ================= -->
+                    <div class="form-section">
+
+                        <div class="form-section-title">
+                            Applicant Information
+                        </div>
+
+                        <div class="row g-3">
+
+                            <!-- Full Name English -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Full Name (English) <span class="">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="fullNameEnglish"
+                                       >
+                            </div>
+
+                            <!-- Full Name Nepali -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Full Name (Nepali)
+                                </label>
+                                <input type="text"
+                                       class="form-control nepali-text"
+                                       formControlName="fullNameNepali">
+                            </div>
+
+                            <!-- DOB (AD) -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Date of Birth (AD) <span class="">*</span>
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       formControlName="dob"
+                                       >
+                            </div>
+
+                            <!-- DOB (BS) -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Date of Birth (BS) <span class="">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="dobBs"
+                                       placeholder="YYYY/MM/DD"
+                                       >
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Gender <span class="">*</span>
+                                </label>
+                                <select class="form-select" formControlName="gender" >
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- NID -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    NID Number
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="nidNumber">
+                            </div>
+
+                            <!-- Citizenship Number -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Number <span class="">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="citizenshipNumber"
+                                       >
+                            </div>
+
+                            <!-- Citizenship Issue Date -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Issue Date
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       formControlName="citizenshipIssueDate">
+                            </div>
+
+                            <!-- Issue District -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Issue District
+                                </label>
+                                <select class="form-select" formControlName="citizenshipIssueDistrict">
+                                    <option value="">Select District</option>
+                                    <option value="Kathmandu">Kathmandu</option>
+                                    <option value="Lalitpur">Lalitpur</option>
+                                    <option value="Bhaktapur">Bhaktapur</option>
+                                    <option value="Dhanusha">Dhanusha</option>
+                                    <option value="Mahottari">Mahottari</option>
+                                    <option value="Sarlahi">Sarlahi</option>
+                                    <option value="Morang">Morang</option>
+                                    <option value="Sunsari">Sunsari</option>
+                                </select>
+                            </div>
+
+                            <!-- Issue Authority -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Issue Authority
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="citizenshipAuthority">
+                            </div>
+
+                            <!-- Reissue -->
+                            <div class="col-md-3">
+                                <label class="form-label d-block">
+                                    Is Reissue?
+                                </label>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="reissue"
+                                           formControlName="reissueYes"
+                                           value="Yes">
+                                    <label class="form-check-label" for="reissueYes">
+                                        Yes
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="reissue"
+                                           formControlName="reissueNo"
+                                           value="No"
+                                           checked>
+                                    <label class="form-check-label" for="reissueNo">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- REISSUE DETAILS -->
+                        <div class="reissue-box" formControlName="reissueDetails" style="display:none;">
+
+                            <div class="row g-3">
+
+                                <!-- Reissue Date -->
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        Reissue Date
+                                    </label>
+                                    <input type="date"
+                                           class="form-control"
+                                           formControlName="reissueDate">
+                                </div>
+
+                                <!-- Pratilipi -->
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        Pratilipi Type
+                                    </label>
+
+                                    <select class="form-select" formControlName="pratilipiType">
+                                        <option value="">
+                                            Select Pratilipi
+                                        </option>
+                                        <option value="First Copy">
+                                            First Copy
+                                        </option>
+                                        <option value="Second Copy">
+                                            Second Copy
+                                        </option>
+                                        <option value="Third Copy">
+                                            Third Copy
+                                        </option>
+                                        <option value="Fourth Copy">
+                                            Fourth Copy
+                                        </option>
+                                        <option value="Other">
+                                            Other
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Reason -->
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        Reissue Reason
+                                    </label>
+
+                                    <select class="form-select" formControlName="reissueReason">
+                                        <option value="">
+                                            Select Reason
+                                        </option>
+                                        <option value="Lost">
+                                            Lost
+                                        </option>
+                                        <option value="Damaged">
+                                            Damaged
+                                        </option>
+                                        <option value="Correction">
+                                            Correction
+                                        </option>
+                                        <option value="Other">
+                                            Other
+                                        </option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= PERMANENT ADDRESS ================= -->
+                    <div class="form-section">
+
+                        <div class="form-section-title">
+                            Permanent Address
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">Province</label>
+                                <select class="form-select" formControlName="perProvince">
+<option value="">Select Province</option>
+<option *ngFor="let p of locationsData" [value]="p.name">{{ p.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">District</label>
+                                <select class="form-select" formControlName="perDistrict" [attr.disabled]="true">
+<option value="">Select District</option>
+<option *ngFor="let d of payeePerDistricts" [value]="d.name">{{ d.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Municipality / VDC
+                                </label>
+                                <select class="form-select" formControlName="perMunicipality" [attr.disabled]="true">
+<option value="">Select Municipality</option>
+<option *ngFor="let m of payeePerMunicipalities" [value]="m.name">{{ m.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Ward No.
+                                </label>
+                                <select class="form-select" formControlName="perWard" [attr.disabled]="true">
+<option value="">Select Ward</option>
+<option *ngFor="let w of payeePerWards" [value]="w.name">{{ w.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Town / Village
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="perTown">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Street Name
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="perStreet">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= TEMPORARY ADDRESS ================= -->
+                    <div class="form-section">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-section-title mb-0 border-0 pb-0">
+                                Temporary Address
+                            </div>
+
+                            <div class="form-check same-address">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       formControlName="sameAddress">
+
+                                <label class="form-check-label" for="sameAddress">
+                                    Same as Permanent Address
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">Province</label>
+                                <select class="form-select" formControlName="tempProvince">
+<option value="">Select Province</option>
+<option *ngFor="let p of locationsData" [value]="p.name">{{ p.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">District</label>
+                                <select class="form-select" formControlName="tempDistrict" [attr.disabled]="true">
+<option value="">Select District</option>
+<option *ngFor="let d of payeeTempDistricts" [value]="d.name">{{ d.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Municipality / VDC
+                                </label>
+                                <select class="form-select" formControlName="tempMunicipality" [attr.disabled]="true">
+<option value="">Select Municipality</option>
+<option *ngFor="let m of payeeTempMunicipalities" [value]="m.name">{{ m.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Ward No.
+                                </label>
+                                <select class="form-select" formControlName="tempWard" [attr.disabled]="true">
+<option value="">Select Ward</option>
+<option *ngFor="let w of payeeTempWards" [value]="w.name">{{ w.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Town / Village
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="tempTown">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Street Name
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="tempStreet">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= FAMILY DETAILS ================= -->
+                    <div class="form-section">
+
+                        <div class="form-section-title">
+                            Family Details
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Grandfather
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="grandfather">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Grandmother
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="grandmother">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Father
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="father">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Mother
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="mother">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Spouse
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="spouse">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Daughter
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="daughter">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Son
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="son">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Father-in-Law
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="fatherInLaw">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Mother-in-Law
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="motherInLaw">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= FORM BUTTONS ================= -->
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                formControlName="cancelBtn">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-success">
+                            Save Applicant
+                        </button>
+
+                    </div>
+
+                
+                        </ng-container>
+
+                        <ng-container *ngIf="caseForm.get('payee.entity_type')?.value === 'institutional'">
+                            
+                        </ng-container>
+                        
+                        <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
+                            <button type="button" class="btn btn-secondary" (click)="toggleForm('payee')">Cancel</button>
+                            <button type="button" class="btn btn-success" (click)="saveSection('payee')">Save Payee Details</button>
+                        </div>
+                    </div>
+
+                    <!-- SUMMARY TABLE SECTION -->
+                    <div *ngIf="!showPayeeForm" class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th>Entity Type</th>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th width="15%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngIf="!hasPayeeData">
+                                    <td colspan="5" class="text-center text-muted py-4">No payee details added yet.</td>
+                                </tr>
+                                <tr *ngIf="hasPayeeData">
+                                    <td>1</td>
+                                    <td class="text-capitalize">{{ caseForm.get('payee.entity_type')?.value }}</td>
+                                    <td>{{ caseForm.get('payee.fullNameEnglish')?.value || caseForm.get('payee.companyNameEnglish')?.value || 'N/A' }}</td>
+                                    <td>{{ caseForm.get('payee.nidNumber')?.value || caseForm.get('payee.panNumber')?.value || 'N/A' }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggleForm('payee')">Edit</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ================= PAYER (TARGET) SECTION ================= -->
+            <div class="card main-card mb-4">
+                <div class="card-header-custom bg-white border-bottom pb-2 pt-3 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="section-title text-danger m-0">2. Payer / Target Details</h5>
+                    <button type="button" class="btn btn-danger btn-sm" (click)="toggleForm('payer')">
+                        {{ showPayerForm ? '- Hide Details' : '+ Add Details' }}
+                    </button>
+                </div>
+                
+                <div class="card-body p-4 bg-white" formGroupName="payer">
+                    
+                    <div *ngIf="showPayerForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Entity Type</label>
+                            <select class="form-select w-25" formControlName="entity_type">
+                                <option value="individual">Individual</option>
+                                <option value="institutional">Institutional</option>
+                            </select>
+                        </div>
+                        
+                        <ng-container *ngIf="caseForm.get('payer.entity_type')?.value === 'individual'">
+                            
+
+                    <!-- ================= BASIC DETAILS ================= -->
+                    <div class="form-section">
+
+                        <div class="form-section-title">
+                            Applicant Information
+                        </div>
+
+                        <div class="row g-3">
+
+                            <!-- Full Name English -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Full Name (English) <span class="">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="fullNameEnglish"
+                                       >
+                            </div>
+
+                            <!-- Full Name Nepali -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Full Name (Nepali)
+                                </label>
+                                <input type="text"
+                                       class="form-control nepali-text"
+                                       formControlName="fullNameNepali">
+                            </div>
+
+                            <!-- DOB (AD) -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Date of Birth (AD) <span class="">*</span>
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       formControlName="dob"
+                                       >
+                            </div>
+
+                            <!-- DOB (BS) -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Date of Birth (BS) <span class="">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="dobBs"
+                                       placeholder="YYYY/MM/DD"
+                                       >
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Gender <span class="">*</span>
+                                </label>
+                                <select class="form-select" formControlName="gender" >
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- NID -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    NID Number
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="nidNumber">
+                            </div>
+
+                            <!-- Citizenship Number -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Number <span class="">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="citizenshipNumber"
+                                       >
+                            </div>
+
+                            <!-- Citizenship Issue Date -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Issue Date
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       formControlName="citizenshipIssueDate">
+                            </div>
+
+                            <!-- Issue District -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Issue District
+                                </label>
+                                <select class="form-select" formControlName="citizenshipIssueDistrict">
+                                    <option value="">Select District</option>
+                                    <option value="Kathmandu">Kathmandu</option>
+                                    <option value="Lalitpur">Lalitpur</option>
+                                    <option value="Bhaktapur">Bhaktapur</option>
+                                    <option value="Dhanusha">Dhanusha</option>
+                                    <option value="Mahottari">Mahottari</option>
+                                    <option value="Sarlahi">Sarlahi</option>
+                                    <option value="Morang">Morang</option>
+                                    <option value="Sunsari">Sunsari</option>
+                                </select>
+                            </div>
+
+                            <!-- Issue Authority -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Issue Authority
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="citizenshipAuthority">
+                            </div>
+
+                            <!-- Reissue -->
+                            <div class="col-md-3">
+                                <label class="form-label d-block">
+                                    Is Reissue?
+                                </label>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="reissue"
+                                           formControlName="reissueYes"
+                                           value="Yes">
+                                    <label class="form-check-label" for="reissueYes">
+                                        Yes
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="reissue"
+                                           formControlName="reissueNo"
+                                           value="No"
+                                           checked>
+                                    <label class="form-check-label" for="reissueNo">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- REISSUE DETAILS -->
+                        <div class="reissue-box" formControlName="reissueDetails" style="display:none;">
+
+                            <div class="row g-3">
+
+                                <!-- Reissue Date -->
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        Reissue Date
+                                    </label>
+                                    <input type="date"
+                                           class="form-control"
+                                           formControlName="reissueDate">
+                                </div>
+
+                                <!-- Pratilipi -->
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        Pratilipi Type
+                                    </label>
+
+                                    <select class="form-select" formControlName="pratilipiType">
+                                        <option value="">
+                                            Select Pratilipi
+                                        </option>
+                                        <option value="First Copy">
+                                            First Copy
+                                        </option>
+                                        <option value="Second Copy">
+                                            Second Copy
+                                        </option>
+                                        <option value="Third Copy">
+                                            Third Copy
+                                        </option>
+                                        <option value="Fourth Copy">
+                                            Fourth Copy
+                                        </option>
+                                        <option value="Other">
+                                            Other
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Reason -->
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        Reissue Reason
+                                    </label>
+
+                                    <select class="form-select" formControlName="reissueReason">
+                                        <option value="">
+                                            Select Reason
+                                        </option>
+                                        <option value="Lost">
+                                            Lost
+                                        </option>
+                                        <option value="Damaged">
+                                            Damaged
+                                        </option>
+                                        <option value="Correction">
+                                            Correction
+                                        </option>
+                                        <option value="Other">
+                                            Other
+                                        </option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= PERMANENT ADDRESS ================= -->
+                    <div class="form-section">
+
+                        <div class="form-section-title">
+                            Permanent Address
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">Province</label>
+                                <select class="form-select" formControlName="perProvince">
+<option value="">Select Province</option>
+<option *ngFor="let p of locationsData" [value]="p.name">{{ p.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">District</label>
+                                <select class="form-select" formControlName="perDistrict" [attr.disabled]="true">
+<option value="">Select District</option>
+<option *ngFor="let d of payerPerDistricts" [value]="d.name">{{ d.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Municipality / VDC
+                                </label>
+                                <select class="form-select" formControlName="perMunicipality" [attr.disabled]="true">
+<option value="">Select Municipality</option>
+<option *ngFor="let m of payerPerMunicipalities" [value]="m.name">{{ m.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Ward No.
+                                </label>
+                                <select class="form-select" formControlName="perWard" [attr.disabled]="true">
+<option value="">Select Ward</option>
+<option *ngFor="let w of payerPerWards" [value]="w.name">{{ w.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Town / Village
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="perTown">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Street Name
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="perStreet">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= TEMPORARY ADDRESS ================= -->
+                    <div class="form-section">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-section-title mb-0 border-0 pb-0">
+                                Temporary Address
+                            </div>
+
+                            <div class="form-check same-address">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       formControlName="sameAddress">
+
+                                <label class="form-check-label" for="sameAddress">
+                                    Same as Permanent Address
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">Province</label>
+                                <select class="form-select" formControlName="tempProvince">
+<option value="">Select Province</option>
+<option *ngFor="let p of locationsData" [value]="p.name">{{ p.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">District</label>
+                                <select class="form-select" formControlName="tempDistrict" [attr.disabled]="true">
+<option value="">Select District</option>
+<option *ngFor="let d of payerTempDistricts" [value]="d.name">{{ d.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Municipality / VDC
+                                </label>
+                                <select class="form-select" formControlName="tempMunicipality" [attr.disabled]="true">
+<option value="">Select Municipality</option>
+<option *ngFor="let m of payerTempMunicipalities" [value]="m.name">{{ m.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Ward No.
+                                </label>
+                                <select class="form-select" formControlName="tempWard" [attr.disabled]="true">
+<option value="">Select Ward</option>
+<option *ngFor="let w of payerTempWards" [value]="w.name">{{ w.name }}</option>
+</select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Town / Village
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="tempTown">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Street Name
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="tempStreet">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= FAMILY DETAILS ================= -->
+                    <div class="form-section">
+
+                        <div class="form-section-title">
+                            Family Details
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Grandfather
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="grandfather">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Grandmother
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="grandmother">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Father
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="father">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Mother
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="mother">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Spouse
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="spouse">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Daughter
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="daughter">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Son
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="son">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Father-in-Law
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="fatherInLaw">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Mother-in-Law
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       formControlName="motherInLaw">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= FORM BUTTONS ================= -->
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                formControlName="cancelBtn">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-success">
+                            Save Applicant
+                        </button>
+
+                    </div>
+
+                
+                        </ng-container>
+
+                        <ng-container *ngIf="caseForm.get('payer.entity_type')?.value === 'institutional'">
+                            
+                        </ng-container>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
+                            <button type="button" class="btn btn-secondary" (click)="toggleForm('payer')">Cancel</button>
+                            <button type="button" class="btn btn-danger" (click)="saveSection('payer')">Save Payer Details</button>
+                        </div>
+                    </div>
+
+                    <div *ngIf="!showPayerForm" class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th>Entity Type</th>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th width="15%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngIf="!hasPayerData">
+                                    <td colspan="5" class="text-center text-muted py-4">No payer details added yet.</td>
+                                </tr>
+                                <tr *ngIf="hasPayerData">
+                                    <td>1</td>
+                                    <td class="text-capitalize">{{ caseForm.get('payer.entity_type')?.value }}</td>
+                                    <td>{{ caseForm.get('payer.fullNameEnglish')?.value || caseForm.get('payer.companyNameEnglish')?.value || 'N/A' }}</td>
+                                    <td>{{ caseForm.get('payer.nidNumber')?.value || caseForm.get('payer.panNumber')?.value || 'N/A' }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" (click)="toggleForm('payer')">Edit</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ================= CHEQUE DETAILS SECTION ================= -->
+            <div class="card main-card mb-4">
+                <div class="card-header-custom bg-white border-bottom pb-2 pt-3 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="section-title text-primary m-0">3. Cheque Details</h5>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="toggleForm('cheque')">
+                        {{ showChequeForm ? '- Hide Details' : '+ Add Details' }}
+                    </button>
+                </div>
+                
+                <div class="card-body p-4 bg-white" formGroupName="cheque">
+                    
+                    <div *ngIf="showChequeForm">
+                        
+
+
+                <!-- =========================================
+                     CHEQUE INFORMATION
+                ========================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+                        Cheque Information
+                    </div>
+
+
+                    <div class="row">
+
+
+                        <!-- Account Holder Name -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Account Holder Name
+                                <span class="">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="accountHolderName"
+                                placeholder="Enter account holder name"
+                                
+                            >
+
+                        </div>
+
+
+                        <!-- Account Number -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Account Number
+                                <span class="">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="accountNumber"
+                                placeholder="Enter account number"
+                                
+                            >
+
+                        </div>
+
+
+                        <!-- Cheque Number -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Cheque Number
+                                <span class="">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="chequeNumber"
+                                placeholder="Enter cheque number"
+                                
+                            >
+
+                        </div>
+
+
+                        <!-- Cheque Date -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Cheque Date
+                                <span class="">*</span>
+                            </label>
+
+                            <input
+                                type="date"
+                                class="form-control"
+                                formControlName="chequeDate"
+                                
+                            >
+
+                        </div>
+
+
+                        <!-- Cheque Amount -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Cheque Amount
+                                <span class="">*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                formControlName="chequeAmount"
+                                placeholder="0.00"
+                                min="0"
+                                step="0.01"
+                                
+                            >
+
+                        </div>
+
+
+                        <!-- Cheque Amount Words -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Cheque Amount in Words
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="chequeAmountWords"
+                                placeholder="Enter amount in words"
+                            >
+
+                        </div>
+
+
+                        <!-- Payee Name -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Payee Name
+                                <span class="">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="payeeName"
+                                placeholder="Enter payee name"
+                                
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     PRESENTMENT DATE
+                ========================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <div style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            gap:15px;
+                        ">
+
+                            <div>
+                                Presentment Dates
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-sm"
+                                formControlName="addPresentmentDateBtn"
+                            >
+                                + Add Presentment Date
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="presentment-box">
+
+                        <div formControlName="presentmentDatesContainer">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     FORM ACTION
+                ========================================== -->
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        formControlName="cancelChequeBtn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-success"
+                    >
+                        Save Cheque
+                    </button>
+
+                </div>
+
+
+            
+                        
+                        <div class="d-flex justify-content-end gap-2 mt-4 border-top pt-3">
+                            <button type="button" class="btn btn-secondary" (click)="toggleForm('cheque')">Cancel</button>
+                            <button type="button" class="btn btn-primary" (click)="saveSection('cheque')">Save Cheque Details</button>
+                        </div>
+                    </div>
+
+                    <div *ngIf="!showChequeForm" class="table-responsive mt-3">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th>Cheque Number</th>
+                                    <th>Cheque Date</th>
+                                    <th>Amount</th>
+                                    <th width="15%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngIf="!hasChequeData">
+                                    <td colspan="5" class="text-center text-muted py-4">No cheque details added yet.</td>
+                                </tr>
+                                <tr *ngIf="hasChequeData">
+                                    <td>1</td>
+                                    <td>{{ caseForm.get('cheque.chequeNumber')?.value || 'N/A' }}</td>
+                                    <td>{{ caseForm.get('cheque.chequeDateAd')?.value || 'N/A' }}</td>
+                                    <td>Rs. {{ caseForm.get('cheque.chequeAmount')?.value || '0' }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggleForm('cheque')">Edit</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+
+        <!-- ================= WORKFLOW ACTIONS ================= -->
+        <div class="card shadow-sm border-0 mb-5 bg-dark text-white">
+            <div class="card-body p-4">
+                <h4 class="mb-4 text-warning">Workflow Actions</h4>
+                <div class="d-flex flex-wrap gap-3">
+                    <button *ngIf="workflowState === 'draft'" class="btn btn-warning px-4" (click)="initiateWorkflow()" [attr.disabled]="!(hasPayeeData && hasPayerData && hasChequeData) ? true : null">
+                        Step 1: Initiate Workflow & Verify
+                    </button>
+                    <button *ngIf="workflowState === 'verified'" class="btn btn-info px-4" (click)="generate45DayNotice()">
+                        Step 2: Generate 45-Day Notice
+                    </button>
+                    <button *ngIf="workflowState === 'notice_generated'" class="btn btn-danger px-4" (click)="generateDishonourCertificate()">
+                        Step 3: Generate Dishonour Certificate
+                    </button>
+                    <button *ngIf="workflowState === 'dishonour_generated'" class="btn btn-success px-4" (click)="receivePhysicalApplication()">
+                        Step 4: Receive Physical Application
+                    </button>
+                    <button *ngIf="workflowState === 'application_received'" class="btn btn-primary px-4" (click)="generateNote()">
+                        Step 5: Generate Final Note (Tippani)
+                    </button>
+                    <span *ngIf="workflowState === 'note_generated'" class="badge bg-success fs-5 p-3">Workflow Completed</span>
+                </div>
+            </div>
+        </div>
+
+    </ng-container>
+</div>
