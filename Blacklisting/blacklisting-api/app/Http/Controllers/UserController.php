@@ -20,7 +20,11 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
             'role' => ['required', Rule::in(['admin', 'maker', 'checker'])],
-            'tenant_id' => 'required|string'
+            'tenant_id' => 'required|string',
+            'staff_id' => 'nullable|string',
+            'branch' => 'nullable|string',
+            'branch_sol' => 'nullable|string',
+            'contact_number' => 'nullable|string'
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -37,7 +41,11 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'role' => ['required', Rule::in(['admin', 'maker', 'checker'])],
-            'tenant_id' => 'required|string'
+            'tenant_id' => 'required|string',
+            'staff_id' => 'nullable|string',
+            'branch' => 'nullable|string',
+            'branch_sol' => 'nullable|string',
+            'contact_number' => 'nullable|string'
         ]);
 
         if ($request->filled('password')) {

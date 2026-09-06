@@ -10,6 +10,7 @@
         "anuzpandey/laravel-nepali-date": "^3.3",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
+        "maatwebsite/excel": "^4.0",
         "phpoffice/phpword": "^1.4",
         "predis/predis": "^3.6",
         "spatie/laravel-activitylog": "^5.1",
@@ -84,6 +85,14 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "audit": {
+            "abandoned": "ignore"
+        },
+        "policy": {
+            "advisories": {
+                "block": false
+            }
         }
     },
     "minimum-stability": "stable",

@@ -9,18 +9,26 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. System Admin (Next Gen Innovations)
-        User::updateOrCreate(['email' => 'admin@nextgen.com'], [
-            'name' => 'System Admin',
-            'password' => Hash::make('password'),
+        // 1. System SaaS Manager (Next Gen Innovations)
+        User::updateOrCreate(['email' => 'superadmin@nextgen.com'], [
+            'name' => 'System Manager',
+            'password' => Hash::make('admin'),
             'tenant_id' => 'system',
+            'role' => 'superadmin'
+        ]);
+
+        // 2. Bank A - Tenant Admin
+        User::updateOrCreate(['email' => 'admin@banka.com'], [
+            'name' => 'Bank A Admin',
+            'password' => Hash::make('admin'),
+            'tenant_id' => 'bank_a',
             'role' => 'admin'
         ]);
 
         // 2. Bank A - Maker (Data Entry)
         User::updateOrCreate(['email' => 'maker@banka.com'], [
             'name' => 'Bank A Maker',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('admin'),
             'tenant_id' => 'bank_a',
             'role' => 'maker'
         ]);
@@ -28,7 +36,7 @@ class DatabaseSeeder extends Seeder
         // 3. Bank A - Checker (Approver)
         User::updateOrCreate(['email' => 'checker@banka.com'], [
             'name' => 'Bank A Checker',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('admin'),
             'tenant_id' => 'bank_a',
             'role' => 'checker'
         ]);

@@ -4,6 +4,7 @@ namespace App\Services;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 use App\Models\BlacklistCase;
+use App\Helpers\NepaliTextHelper;
 
 class DocumentService
 {
@@ -13,10 +14,12 @@ class DocumentService
     public function generateNotice(BlacklistCase $case, array $data)
     {
         $phpWord = new PhpWord();
-        
-        // Define default styling for Nepali text
-        $fontStyle = ['name' => 'Mangal', 'size' => 12];
-        $boldStyle = ['name' => 'Mangal', 'size' => 12, 'bold' => true];
+
+        // ─── Font: 'Preeti' for Nepali text output ────────────────────
+        // Text from DB is Unicode; NepaliTextHelper converts to Preeti ASCII
+        // The Word document uses Preeti font so glyphs render correctly.
+        $fontStyle    = ['name' => 'Preeti', 'size' => 12];
+        $boldStyle    = ['name' => 'Preeti', 'size' => 12, 'bold' => true];
         $paragraphStyle = ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceAfter' => 200];
         $rightAlign = ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::RIGHT];
         $centerAlign = ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER];
@@ -31,10 +34,12 @@ class DocumentService
         $section->addText("पत्र संख्याः " . ($data['ref_number'] ?? '................'), $fontStyle);
         $section->addTextBreak(1);
         
-        // Addressee Block
-        $customerName = $case->target->name_nepali ?? $case->target->name_english;
-        $section->addText($customerName, $boldStyle);
-        $section->addText("ठेगानाः " . ($data['customer_address'] ?? '................'), $fontStyle);
+        // Addressee Block — convert Unicode name from DB → Preeti for doc
+        $customerNameUnicode = $case->target->name_nepali ?? $case->target->name_english;
+        $customerName = NepaliTextHelper::unicodeToPreeti($customerNameUnicode);
+        $customerAddr = NepaliTextHelper::unicodeToPreeti($data['customer_address'] ?? '................');
+        $section->addText(NepaliTextHelper::unicodeToPreeti($customerNameUnicode), $boldStyle);
+        $section->addText(NepaliTextHelper::unicodeToPreeti('ठेगानाः ') . $customerAddr, $fontStyle);
         $section->addTextBreak(1);
         
         // Subject
@@ -78,9 +83,10 @@ class DocumentService
     public function generateDishonourCertificate(BlacklistCase $case, array $data)
     {
         $phpWord = new PhpWord();
-        
-        $fontStyle = ['name' => 'Mangal', 'size' => 12];
-        $boldStyle = ['name' => 'Mangal', 'size' => 12, 'bold' => true];
+
+        // ─── Font: 'Preeti' for Nepali text output ────────────────────
+        $fontStyle    = ['name' => 'Preeti', 'size' => 12];
+        $boldStyle    = ['name' => 'Preeti', 'size' => 12, 'bold' => true];
         $paragraphStyle = ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::BOTH, 'spaceAfter' => 200];
         $rightAlign = ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::RIGHT];
         $centerAlign = ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER];
@@ -108,8 +114,9 @@ class DocumentService
         $body1 = "उपरोक्त सम्बन्धमा तपाईले यस बैंकमा मिति {$data['application_date']} मा चेक अनादर भएको प्रमाणित गराउन निवेदन पेश गरे बमोजिम चेक अनादर भएको व्यहोरा प्रमाणित गरिएको सम्बन्धमा यो पत्र लेखिदैछ ।";
         $section->addText($body1, $fontStyle, $paragraphStyle);
         
-        // Main Body Paragraph 2
-        $customerName = $case->target->name_nepali ?? $case->target->name_english;
+        // Main Body Paragraph 2 — convert Unicode names from DB to Preeti
+        $customerNameUnicode = $case->target->name_nepali ?? $case->target->name_english;
+        $customerName = NepaliTextHelper::unicodeToPreeti($customerNameUnicode);
         $reason = $data['dishonour_reason'] ?? 'खातामा मौज्दात नभएको वा मौज्दात पर्याप्त नभएको';
         $body2 = "यस बैंकका खातावाला {$customerName} ले यस बैंकको {$data['branch_name']} शाखामा खोलिएको खाता मार्फत भुक्तानी हुने गरी तपाई {$data['payee_name']} को नाममा तपसिलमा उल्लेखित रकम बराबरको चेक जारी गरिदिनुभएकोमा तपाईले उक्त चेकबाट भुक्तानी प्राप्त गर्न मिति {$data['presentation_date_1']}, मिति {$data['presentation_date_2']} मा चेक पेश गर्नुभएकोमा उक्त खातामा मौज्दात नभएको वा मौज्दात पर्याप्त नभएको / {$reason} कारण चेकबाट भुक्तानी हुन नसकेको हुँदा मिति {$data['notice_date']} मा निज खातावालालाई चेक बापतको आवश्यक रकम खातामा जम्मा गर्न ४५ (पँैतालीस) दिनको म्याद दिई सूचना दिईएको र सो बमोजिम उक्त खातामा आवश्यक मौज्दात रकम जम्मा नभएको कारण तपाईले भुक्तानी माग्दा भुक्तानी दिन नसकिएकोमा तपाईले मिति {$data['application_date']} मा चेक अनादर भएको प्रमाणित गरिदिनु हुन यस बैंकमा निवेदन पेश गरे बमोजिम तपसिलमा उल्लेखित चेक अनादर भएको प्रमाणित गरिन्छ ।";
         $section->addText($body2, $fontStyle, $paragraphStyle);

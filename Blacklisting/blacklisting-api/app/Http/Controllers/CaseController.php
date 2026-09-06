@@ -14,60 +14,95 @@ class CaseController extends Controller
         $this->engine = $engine;
     }
 
-    public function store(Request $request)
+    public function lodge(Request $request)
     {
         $validated = $request->validate([
-            'tenant_id' => 'required|string',
-            'category' => 'required|string',
-            'total_liability' => 'numeric',
+            'applicant_name' => 'required|string',
+            'applicant_email' => 'required|email',
+            'applicant_contact' => 'required|string',
             
-            // Applicant Details
-            'applicant_name_english' => 'required|string',
-            'applicant_name_nepali' => 'nullable|string',
-            'applicant_contact' => 'nullable|array',
+            'targets' => 'required|array|min:1',
+            'targets.*.account_holder_name' => 'required|string',
+            'targets.*.account_holder_entity_type' => 'required|string',
             
-            // Target Details
-            'target_name_english' => 'required|string',
-            'target_name_nepali' => 'nullable|string',
-            'target_citizenship' => 'nullable|string',
-            'target_contact' => 'nullable|array',
+            'targets.*.cheque_date' => 'required|date',
+            'targets.*.amount' => 'required|numeric',
+            'targets.*.amount_in_words' => 'required|string',
+            'targets.*.cheque_number' => 'required|string',
+            'targets.*.payee_name' => 'required|string',
+            'targets.*.payer_name' => 'required|string',
+            'targets.*.account_number' => 'required|string',
+            
+            'targets.*.return_reason' => 'required|string',
+            'targets.*.other_reason' => 'nullable|string',
+            'targets.*.presentment_dates' => 'required|array',
         ]);
 
         try {
-            // Create or fetch applicant
-            $applicant = \App\Models\Profile::firstOrCreate(
-                [
-                    'tenant_id' => $validated['tenant_id'],
-                    'name_english' => $validated['applicant_name_english'],
-                    'type' => 'applicant'
-                ],
-                [
-                    'name_nepali' => $validated['applicant_name_nepali'] ?? null,
-                    'contact_details' => $validated['applicant_contact'] ?? [],
+            \Illuminate\Support\Facades\DB::beginTransaction();
+            $tenantId = 'default_tenant'; 
+
+            // Create applicant once
+            $applicant = \App\Models\Profile::create([
+                'tenant_id' => $tenantId,
+                'name_english' => $validated['applicant_name'],
+                'type' => 'applicant',
+                'contact_details' => [
+                    'email' => $validated['applicant_email'],
+                    'phone' => $validated['applicant_contact']
                 ]
-            );
+            ]);
 
-            // Create or fetch target
-            $target = \App\Models\Profile::firstOrCreate(
-                [
-                    'tenant_id' => $validated['tenant_id'],
-                    'citizenship_number' => $validated['target_citizenship'],
-                    'type' => 'target'
-                ],
-                [
-                    'name_english' => $validated['target_name_english'],
-                    'name_nepali' => $validated['target_name_nepali'] ?? null,
-                    'contact_details' => $validated['target_contact'] ?? [],
-                ]
-            );
+            $createdCases = [];
 
-            // Append foreign keys for WorkflowEngine
-            $validated['applicant_id'] = $applicant->id;
-            $validated['target_id'] = $target->id;
+            // Loop through all targets (Account Holders) and create independent cases
+            foreach ($validated['targets'] as $targetData) {
+                // Create target Profile
+                $target = \App\Models\Profile::create([
+                    'tenant_id' => $tenantId,
+                    'name_english' => $targetData['account_holder_name'],
+                    'type' => 'target',
+                    'contact_details' => [
+                        'entity_type' => $targetData['account_holder_entity_type']
+                    ]
+                ]);
 
-            $case = $this->engine->initializeCase($validated['tenant_id'], $validated);
-            return response()->json(['success' => true, 'data' => $case], 201);
+                // Create independent case for this target
+                $case = BlacklistCase::create([
+                    'tenant_id' => $tenantId,
+                    'applicant_id' => $applicant->id, // Share the same applicant
+                    'target_id' => $target->id,
+                    'category' => 'blacklisting',
+                    'total_liability' => $targetData['amount'],
+                    'status' => 'draft', 
+                    'notice_expires_at' => now()->addDays(45) 
+                ]);
+
+                // Save cheque details tied to THIS case
+                \App\Models\ChequeDetail::create([
+                    'case_id' => $case->id,
+                    'cheque_date' => $targetData['cheque_date'],
+                    'amount' => $targetData['amount'],
+                    'amount_in_words' => $targetData['amount_in_words'],
+                    'cheque_number' => $targetData['cheque_number'],
+                    'payee_name' => $targetData['payee_name'],
+                    'payer_name' => $targetData['payer_name'],
+                    'account_number' => $targetData['account_number'],
+                    'presentment_dates' => $targetData['presentment_dates'],
+                    'return_reason' => $targetData['return_reason'],
+                    'other_reason' => $targetData['other_reason'] ?? null,
+                ]);
+
+                // Log event for this case
+                $this->engine->recordEvent($case, 'created', [], 'Case lodged and 45-day notice initiated.');
+                
+                $createdCases[] = $case;
+            }
+
+            \Illuminate\Support\Facades\DB::commit();
+            return response()->json(['success' => true, 'data' => $createdCases], 201);
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
         }
     }
