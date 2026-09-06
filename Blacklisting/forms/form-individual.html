@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicant Details</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-wrapper {
+            padding: 30px 15px;
+        }
+
+        .main-card {
+            border: 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header-custom {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 18px 22px;
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            color: #222;
+        }
+
+        .form-section {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .form-control,
+        .form-select {
+            min-height: 40px;
+            font-size: 14px;
+        }
+
+        .required {
+            color: red;
+        }
+
+        .reissue-box {
+            background: #f8f9fa;
+            border: 1px dashed #ced4da;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .table th {
+            font-size: 13px;
+            white-space: nowrap;
+            background: #f8f9fa;
+        }
+
+        .table td {
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .action-btn {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        #applicantFormSection {
+            display: none;
+        }
+
+        .same-address {
+            font-size: 13px;
+        }
+
+        .modal-body .form-control,
+        .modal-body .form-select {
+            min-height: 38px;
+        }
+
+        @font-face {
+            font-family: 'Preeti';
+            src: url('https://cdn.jsdelivr.net/gh/subashz/nepali-fonts@master/fonts/preeti.ttf') format('truetype');
+        }
+
+        /* Preeti font for Nepali name field */
+        #fullNameNepali {
+            font-family: 'Preeti', sans-serif;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid page-wrapper">
+
+    <!-- ================= APPLICANT DETAILS CARD ================= -->
+    <div class="card main-card">
+
+        <!-- CARD HEADER -->
+        <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <h5 class="section-title">Applicant Details</h5>
+
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    id="addApplicantBtn">
+                + Add Details
+            </button>
+        </div>
+
+        <!-- CARD BODY -->
+        <div class="card-body">
+
+            <!-- ================= FORM ================= -->
+            <div id="applicantFormSection">
+
+                <form id="applicantForm">
+
+                    <!-- ================= BASIC DETAILS ================= -->
+                    <div class="form-section">
+
+                        <div class="form-section-title">
+                            Applicant Information
+                        </div>
+
+                        <div class="row g-3">
+
+                            <!-- Full Name English -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Full Name (English) <span class="required">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="fullNameEnglish"
+                                       required>
+                            </div>
+
+                            <!-- Full Name Nepali -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Full Name (Nepali)
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="fullNameNepali">
+                            </div>
+
+                            <!-- DOB (AD) -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Date of Birth (AD) <span class="required">*</span>
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="dob"
+                                       required>
+                            </div>
+
+                            <!-- DOB (BS) -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Date of Birth (BS) <span class="required">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="dobBs"
+                                       placeholder="YYYY/MM/DD"
+                                       required>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Gender <span class="required">*</span>
+                                </label>
+                                <select class="form-select" id="gender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- NID -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    NID Number
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="nidNumber">
+                            </div>
+
+                            <!-- Citizenship Number -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Number <span class="required">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="citizenshipNumber"
+                                       required>
+                            </div>
+
+                            <!-- Citizenship Issue Date -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Issue Date
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="citizenshipIssueDate">
+                            </div>
+
+                            <!-- Issue District -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Issue District
+                                </label>
+                                <select class="form-select" id="citizenshipIssueDistrict">
+                                    <option value="">Select District</option>
+                                    <option value="Kathmandu">Kathmandu</option>
+                                    <option value="Lalitpur">Lalitpur</option>
+                                    <option value="Bhaktapur">Bhaktapur</option>
+                                    <option value="Dhanusha">Dhanusha</option>
+                                    <option value="Mahottari">Mahottari</option>
+                                    <option value="Sarlahi">Sarlahi</option>
+                                    <option value="Morang">Morang</option>
+                                    <option value="Sunsari">Sunsari</option>
+                                </select>
+                            </div>
+
+                            <!-- Issue Authority -->
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Citizenship Issue Authority
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="citizenshipAuthority">
+                            </div>
+
+                            <!-- Reissue -->
+                            <div class="col-md-3">
+                                <label class="form-label d-block">
+                                    Is Reissue?
+                                </label>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="reissue"
+                                           id="reissueYes"
+                                           value="Yes">
+                                    <label class="form-check-label" for="reissueYes">
+                                        Yes
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="reissue"
+                                           id="reissueNo"
+                                           value="No"
+                                           checked>
+                                    <label class="form-check-label" for="reissueNo">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- REISSUE DETAILS -->
+                        <div class="reissue-box" id="reissueDetails" style="display:none;">
+
+                            <div class="row g-3">
+
+                                <!-- Reissue Date -->
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        Reissue Date
+                                    </label>
+                                    <input type="date"
+                                           class="form-control"
+                                           id="reissueDate">
+                                </div>
+
+                                <!-- Pratilipi -->
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        Pratilipi Type
+                                    </label>
+
+                                    <select class="form-select" id="pratilipiType">
+                                        <option value="">
+                                            Select Pratilipi
+                                        </option>
+                                        <option value="First Copy">
+                                            First Copy
+                                        </option>
+                                        <option value="Second Copy">
+                                            Second Copy
+                                        </option>
+                                        <option value="Third Copy">
+                                            Third Copy
+                                        </option>
+                                        <option value="Fourth Copy">
+                                            Fourth Copy
+                                        </option>
+                                        <option value="Other">
+                                            Other
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Reason -->
+                                <div class="col-md-3">
+                                    <label class="form-label">
+                                        Reissue Reason
+                                    </label>
+
+                                    <select class="form-select" id="reissueReason">
+                                        <option value="">
+                                            Select Reason
+                                        </option>
+                                        <option value="Lost">
+                                            Lost
+                                        </option>
+                                        <option value="Damaged">
+                                            Damaged
+                                        </option>
+                                        <option value="Correction">
+                                            Correction
+                                        </option>
+                                        <option value="Other">
+                                            Other
+                                        </option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= PERMANENT ADDRESS ================= -->
+                    <div class="form-section">
+
+                        <div class="form-section-title">
+                            Permanent Address
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">Province</label>
+                                <select class="form-select" id="perProvince">
+                                    <option value="">Select Province</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">District</label>
+                                <select class="form-select" id="perDistrict" disabled>
+                                    <option value="">Select District</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Municipality / VDC
+                                </label>
+                                <select class="form-select" id="perMunicipality" disabled>
+                                    <option value="">Select Municipality</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Ward No.
+                                </label>
+                                <select class="form-select" id="perWard" disabled>
+                                    <option value="">Select Ward</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Town / Village
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="perTown">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Street Name
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="perStreet">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= TEMPORARY ADDRESS ================= -->
+                    <div class="form-section">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-section-title mb-0 border-0 pb-0">
+                                Temporary Address
+                            </div>
+
+                            <div class="form-check same-address">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       id="sameAddress">
+
+                                <label class="form-check-label" for="sameAddress">
+                                    Same as Permanent Address
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">Province</label>
+                                <select class="form-select" id="tempProvince">
+                                    <option value="">Select Province</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">District</label>
+                                <select class="form-select" id="tempDistrict" disabled>
+                                    <option value="">Select District</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Municipality / VDC
+                                </label>
+                                <select class="form-select" id="tempMunicipality" disabled>
+                                    <option value="">Select Municipality</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Ward No.
+                                </label>
+                                <select class="form-select" id="tempWard" disabled>
+                                    <option value="">Select Ward</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Town / Village
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="tempTown">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Street Name
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="tempStreet">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= FAMILY DETAILS ================= -->
+                    <div class="form-section">
+
+                        <div class="form-section-title">
+                            Family Details
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Grandfather
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="grandfather">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Grandmother
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="grandmother">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Father
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="father">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Mother
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="mother">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Spouse
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="spouse">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Daughter
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="daughter">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Son
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="son">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Father-in-Law
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="fatherInLaw">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">
+                                    Mother-in-Law
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="motherInLaw">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================= FORM BUTTONS ================= -->
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                id="cancelBtn">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-success">
+                            Save Applicant
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- ================= SUMMARY TABLE ================= -->
+            <div class="table-responsive mt-3" id="summaryTableContainer" style="display: none;">
+
+                <table class="table table-bordered table-hover align-middle"
+                       id="applicantTable">
+
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th>Full Name</th>
+                            <th>Date of Birth</th>
+                            <th>Citizenship Number</th>
+                            <th>Father Name</th>
+                            <th width="18%">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="applicantTableBody">
+
+                        <tr id="noDataRow">
+                            <td colspan="6"
+                                class="text-center text-muted py-4">
+                                No applicant details added yet.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ================= VIEW MODAL ================= -->
+
+<div class="modal fade" id="viewModal" tabindex="-1">
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Applicant Details
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <div class="modal-body"
+                 id="viewModalBody">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Date Converter JS -->
+<script src="../Date Converter/core.js"></script>
+
+
+<script>
+
+    let applicants = [];
+    let editIndex = -1;
+
+    // =========================
+    // AD/BS DATE CONVERSION
+    // =========================
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("dob").addEventListener("change", function () {
+            if (!window.DateConverter) return;
+            const adDate = this.value;
+            if (adDate) {
+                try {
+                    const dateObj = new Date(adDate);
+                    const y = dateObj.getFullYear();
+                    const m = dateObj.getMonth() + 1;
+                    const d = dateObj.getDate();
+                    
+                    const converter = new window.DateConverter(y, m, d);
+                    document.getElementById("dobBs").value = converter.convertToBS().toBSString().replace(/-/g, '/');
+                } catch (e) {
+                    console.error("AD to BS Conversion Error:", e);
+                }
+            }
+        });
+
+        document.getElementById("dobBs").addEventListener("change", function () {
+            if (!window.DateConverter) return;
+            const bsDate = this.value.trim();
+            const parts = bsDate.split(/[-/.]/);
+            
+            if (parts.length === 3) {
+                const y = parseInt(parts[0]);
+                const m = parseInt(parts[1]);
+                const d = parseInt(parts[2]);
+                
+                if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+                    try {
+                        const converter = new window.DateConverter(y, m, d);
+                        const adString = converter.convertToAD().toADString();
+                        
+                        const [adY, adM, adD] = adString.split('-');
+                        const formattedAd = `${adY}-${adM.toString().padStart(2, '0')}-${adD.toString().padStart(2, '0')}`;
+                        document.getElementById("dob").value = formattedAd;
+                    } catch (e) {
+                        console.error("BS to AD Conversion Error:", e);
+                    }
+                }
+            }
+        });
+    });
+
+
+    // =========================
+    // ADD DETAILS BUTTON
+    // =========================
+
+    document.getElementById("addApplicantBtn").addEventListener("click", function () {
+
+        editIndex = -1;
+
+        document.getElementById("applicantForm").reset();
+
+        document.getElementById("reissueNo").checked = true;
+
+        document.getElementById("reissueDetails").style.display = "none";
+
+        document.getElementById("applicantFormSection").style.display = "block";
+
+        window.scrollTo({
+            top: document.getElementById("applicantFormSection").offsetTop - 20,
+            behavior: "smooth"
+        });
+
+    });
+
+
+    // =========================
+    // REISSUE TOGGLE
+    // =========================
+
+    document.querySelectorAll('input[name="reissue"]').forEach(function (radio) {
+
+        radio.addEventListener("change", function () {
+
+            if (document.getElementById("reissueYes").checked) {
+
+                document.getElementById("reissueDetails").style.display = "block";
+
+            } else {
+
+                document.getElementById("reissueDetails").style.display = "none";
+
+            }
+
+        });
+
+    });
+
+
+    // =========================
+    // SAME ADDRESS
+    // =========================
+
+    document.getElementById("sameAddress").addEventListener("change", function () {
+
+        if (this.checked) {
+            
+            const fields = ["Province", "District", "Municipality", "Ward", "Town", "Street"];
+            
+            fields.forEach(field => {
+                const perEl = document.getElementById(`per${field}`);
+                const tempEl = document.getElementById(`temp${field}`);
+                
+                if (perEl.tagName === "SELECT") {
+                    tempEl.innerHTML = perEl.innerHTML;
+                    tempEl.disabled = perEl.disabled;
+                }
+                
+                tempEl.value = perEl.value;
+            });
+
+        }
+
+    });
+
+
+    // =========================
+    // FORM SUBMIT
+    // =========================
+
+    document.getElementById("applicantForm").addEventListener("submit", function (e) {
+
+        e.preventDefault();
+
+        const applicant = {
+
+            fullNameEnglish:
+                document.getElementById("fullNameEnglish").value,
+
+            fullNameNepali:
+                document.getElementById("fullNameNepali").value,
+
+            dob:
+                document.getElementById("dob").value,
+
+            dobBs:
+                document.getElementById("dobBs").value,
+
+            gender:
+                document.getElementById("gender").value,
+
+            nidNumber:
+                document.getElementById("nidNumber").value,
+
+            citizenshipNumber:
+                document.getElementById("citizenshipNumber").value,
+
+            citizenshipIssueDate:
+                document.getElementById("citizenshipIssueDate").value,
+
+            citizenshipIssueDistrict:
+                document.getElementById("citizenshipIssueDistrict").value,
+
+            citizenshipAuthority:
+                document.getElementById("citizenshipAuthority").value,
+
+            reissue:
+                document.querySelector('input[name="reissue"]:checked').value,
+
+            reissueDate:
+                document.getElementById("reissueDate").value,
+
+            pratilipiType:
+                document.getElementById("pratilipiType").value,
+
+            reissueReason:
+                document.getElementById("reissueReason").value,
+
+
+            // Permanent Address
+            permanentAddress: {
+
+                province:
+                    document.getElementById("perProvince").value,
+
+                district:
+                    document.getElementById("perDistrict").value,
+
+                municipality:
+                    document.getElementById("perMunicipality").value,
+
+                ward:
+                    document.getElementById("perWard").value,
+
+                town:
+                    document.getElementById("perTown").value,
+
+                street:
+                    document.getElementById("perStreet").value
+            },
+
+
+            // Temporary Address
+            temporaryAddress: {
+
+                province:
+                    document.getElementById("tempProvince").value,
+
+                district:
+                    document.getElementById("tempDistrict").value,
+
+                municipality:
+                    document.getElementById("tempMunicipality").value,
+
+                ward:
+                    document.getElementById("tempWard").value,
+
+                town:
+                    document.getElementById("tempTown").value,
+
+                street:
+                    document.getElementById("tempStreet").value
+            },
+
+
+            // Family
+            family: {
+
+                grandfather:
+                    document.getElementById("grandfather").value,
+
+                grandmother:
+                    document.getElementById("grandmother").value,
+
+                father:
+                    document.getElementById("father").value,
+
+                mother:
+                    document.getElementById("mother").value,
+
+                spouse:
+                    document.getElementById("spouse").value,
+
+                daughter:
+                    document.getElementById("daughter").value,
+
+                son:
+                    document.getElementById("son").value,
+
+                fatherInLaw:
+                    document.getElementById("fatherInLaw").value,
+
+                motherInLaw:
+                    document.getElementById("motherInLaw").value
+            }
+
+        };
+
+
+        // EDIT
+        if (editIndex !== -1) {
+
+            applicants[editIndex] = applicant;
+
+            editIndex = -1;
+
+        }
+
+        // ADD
+        else {
+
+            applicants.push(applicant);
+
+        }
+
+
+        renderTable();
+
+        document.getElementById("applicantForm").reset();
+
+        document.getElementById("reissueNo").checked = true;
+
+        document.getElementById("reissueDetails").style.display = "none";
+
+        document.getElementById("applicantFormSection").style.display = "none";
+
+    });
+
+
+    // =========================
+    // RENDER TABLE
+    // =========================
+
+    function renderTable() {
+
+        const tbody =
+            document.getElementById("applicantTableBody");
+        const tableContainer =
+            document.getElementById("summaryTableContainer");
+
+        tbody.innerHTML = "";
+
+        if (applicants.length === 0) {
+            tableContainer.style.display = "none";
+            return;
+        }
+
+        tableContainer.style.display = "block";
+
+
+        applicants.forEach(function (applicant, index) {
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+
+                <td>${index + 1}</td>
+
+                <td>
+                    <strong>
+                        ${applicant.fullNameEnglish || "-"}
+                    </strong>
+
+                    ${
+                        applicant.fullNameNepali
+                        ? `<br>
+                           <small class="text-muted">
+                               ${applicant.fullNameNepali}
+                           </small>`
+                        : ""
+                    }
+                </td>
+
+                <td>
+                    ${formatDate(applicant.dob)}<br><small class="text-muted">${applicant.dobBs || ''} BS</small>
+                </td>
+
+                <td>
+                    ${applicant.citizenshipNumber || "-"}
+                </td>
+
+                <td>
+                    ${applicant.family.father || "-"}
+                </td>
+
+                <td>
+
+                    <button type="button"
+                            class="btn btn-info text-white action-btn"
+                            onclick="viewApplicant(${index})">
+                        View
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-warning action-btn"
+                            onclick="editApplicant(${index})">
+                        Edit
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-danger action-btn"
+                            onclick="deleteApplicant(${index})">
+                        Delete
+                    </button>
+
+                </td>
+            `;
+
+            tbody.appendChild(row);
+
+        });
+
+    }
+
+
+    // =========================
+    // VIEW
+    // =========================
+
+    function viewApplicant(index) {
+
+        const a = applicants[index];
+
+        const html = `
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <strong>Full Name:</strong><br>
+                    ${a.fullNameEnglish || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Full Name Nepali:</strong><br>
+                    ${a.fullNameNepali || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Date of Birth:</strong><br>
+                    ${formatDate(a.dob)}<br><small class="text-muted">${a.dobBs || ''} BS</small>
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Gender:</strong><br>
+                    ${a.gender || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>NID Number:</strong><br>
+                    ${a.nidNumber || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Citizenship Number:</strong><br>
+                    ${a.citizenshipNumber || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Issue Date:</strong><br>
+                    ${formatDate(a.citizenshipIssueDate)}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Issue District:</strong><br>
+                    ${a.citizenshipIssueDistrict || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Issue Authority:</strong><br>
+                    ${a.citizenshipAuthority || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Reissue:</strong><br>
+                    ${a.reissue || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Reissue Date:</strong><br>
+                    ${formatDate(a.reissueDate)}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Pratilipi:</strong><br>
+                    ${a.pratilipiType || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Reissue Reason:</strong><br>
+                    ${a.reissueReason || "-"}
+                </div>
+
+            </div>
+
+            <hr>
+
+            <h6 class="fw-bold mb-3">
+                Permanent Address
+            </h6>
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <strong>Province:</strong><br>
+                    ${a.permanentAddress.province || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>District:</strong><br>
+                    ${a.permanentAddress.district || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Municipality/VDC:</strong><br>
+                    ${a.permanentAddress.municipality || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Ward:</strong><br>
+                    ${a.permanentAddress.ward || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Town/Village:</strong><br>
+                    ${a.permanentAddress.town || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Street:</strong><br>
+                    ${a.permanentAddress.street || "-"}
+                </div>
+
+            </div>
+
+            <hr>
+
+            <h6 class="fw-bold mb-3">
+                Temporary Address
+            </h6>
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <strong>Province:</strong><br>
+                    ${a.temporaryAddress.province || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>District:</strong><br>
+                    ${a.temporaryAddress.district || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Municipality/VDC:</strong><br>
+                    ${a.temporaryAddress.municipality || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Ward:</strong><br>
+                    ${a.temporaryAddress.ward || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Town/Village:</strong><br>
+                    ${a.temporaryAddress.town || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Street:</strong><br>
+                    ${a.temporaryAddress.street || "-"}
+                </div>
+
+            </div>
+
+            <hr>
+
+            <h6 class="fw-bold mb-3">
+                Family Details
+            </h6>
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <strong>Grandfather:</strong><br>
+                    ${a.family.grandfather || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Grandmother:</strong><br>
+                    ${a.family.grandmother || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Father:</strong><br>
+                    ${a.family.father || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Mother:</strong><br>
+                    ${a.family.mother || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Spouse:</strong><br>
+                    ${a.family.spouse || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Daughter:</strong><br>
+                    ${a.family.daughter || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Son:</strong><br>
+                    ${a.family.son || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Father-in-Law:</strong><br>
+                    ${a.family.fatherInLaw || "-"}
+                </div>
+
+                <div class="col-md-3">
+                    <strong>Mother-in-Law:</strong><br>
+                    ${a.family.motherInLaw || "-"}
+                </div>
+
+            </div>
+        `;
+
+
+        document.getElementById("viewModalBody").innerHTML = html;
+
+        const modal =
+            new bootstrap.Modal(document.getElementById("viewModal"));
+
+        modal.show();
+
+    }
+
+
+    // =========================
+    // EDIT
+    // =========================
+
+    function editApplicant(index) {
+
+        const a = applicants[index];
+
+        editIndex = index;
+
+        document.getElementById("applicantFormSection").style.display = "block";
+
+
+        document.getElementById("fullNameEnglish").value =
+            a.fullNameEnglish;
+
+        document.getElementById("fullNameNepali").value =
+            a.fullNameNepali;
+
+        document.getElementById("dob").value =
+            a.dob;
+
+        document.getElementById("dobBs").value =
+            a.dobBs || "";
+
+        document.getElementById("gender").value =
+            a.gender;
+
+        document.getElementById("nidNumber").value =
+            a.nidNumber;
+
+        document.getElementById("citizenshipNumber").value =
+            a.citizenshipNumber;
+
+        document.getElementById("citizenshipIssueDate").value =
+            a.citizenshipIssueDate;
+
+        document.getElementById("citizenshipIssueDistrict").value =
+            a.citizenshipIssueDistrict;
+
+        document.getElementById("citizenshipAuthority").value =
+            a.citizenshipAuthority;
+
+
+        if (a.reissue === "Yes") {
+
+            document.getElementById("reissueYes").checked = true;
+
+            document.getElementById("reissueDetails").style.display = "block";
+
+        } else {
+
+            document.getElementById("reissueNo").checked = true;
+
+            document.getElementById("reissueDetails").style.display = "none";
+
+        }
+
+
+        document.getElementById("reissueDate").value =
+            a.reissueDate;
+
+        document.getElementById("pratilipiType").value =
+            a.pratilipiType;
+
+        document.getElementById("reissueReason").value =
+            a.reissueReason;
+
+
+        // Permanent Address
+
+        document.getElementById("perProvince").value =
+            a.permanentAddress.province;
+
+        document.getElementById("perDistrict").value =
+            a.permanentAddress.district;
+
+        document.getElementById("perMunicipality").value =
+            a.permanentAddress.municipality;
+
+        document.getElementById("perWard").value =
+            a.permanentAddress.ward;
+
+        document.getElementById("perTown").value =
+            a.permanentAddress.town;
+
+        document.getElementById("perStreet").value =
+            a.permanentAddress.street;
+
+
+        // Temporary Address
+
+        document.getElementById("tempProvince").value =
+            a.temporaryAddress.province;
+
+        document.getElementById("tempDistrict").value =
+            a.temporaryAddress.district;
+
+        document.getElementById("tempMunicipality").value =
+            a.temporaryAddress.municipality;
+
+        document.getElementById("tempWard").value =
+            a.temporaryAddress.ward;
+
+        document.getElementById("tempTown").value =
+            a.temporaryAddress.town;
+
+        document.getElementById("tempStreet").value =
+            a.temporaryAddress.street;
+
+
+        // Family
+
+        document.getElementById("grandfather").value =
+            a.family.grandfather;
+
+        document.getElementById("grandmother").value =
+            a.family.grandmother;
+
+        document.getElementById("father").value =
+            a.family.father;
+
+        document.getElementById("mother").value =
+            a.family.mother;
+
+        document.getElementById("spouse").value =
+            a.family.spouse;
+
+        document.getElementById("daughter").value =
+            a.family.daughter;
+
+        document.getElementById("son").value =
+            a.family.son;
+
+        document.getElementById("fatherInLaw").value =
+            a.family.fatherInLaw;
+
+        document.getElementById("motherInLaw").value =
+            a.family.motherInLaw;
+
+
+        window.scrollTo({
+            top: document.getElementById("applicantFormSection").offsetTop - 20,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    // =========================
+    // DELETE
+    // =========================
+
+    function deleteApplicant(index) {
+
+        if (confirm("Are you sure you want to delete this applicant?")) {
+
+            applicants.splice(index, 1);
+
+            renderTable();
+
+        }
+
+    }
+
+
+    // =========================
+    // CANCEL
+    // =========================
+
+    document.getElementById("cancelBtn").addEventListener("click", function () {
+
+        document.getElementById("applicantForm").reset();
+
+        document.getElementById("reissueNo").checked = true;
+
+        document.getElementById("reissueDetails").style.display = "none";
+
+        document.getElementById("applicantFormSection").style.display = "none";
+
+        editIndex = -1;
+
+    });
+
+
+    // =========================
+    // DATE FORMAT
+    // =========================
+
+    function formatDate(date) {
+
+        if (!date) {
+            return "-";
+        }
+
+        const d = new Date(date);
+
+        if (isNaN(d.getTime())) {
+            return date;
+        }
+
+        return d.toLocaleDateString("en-GB");
+
+    }
+
+    // =========================
+    // LOCATION JSON INTEGRATION
+    // =========================
+
+    let locationsData = [];
+
+    // Helper function to fetch data from JSON
+    async function loadLocationsData() {
+        try {
+            const response = await fetch('locations_en.json');
+            if (!response.ok) throw new Error("Network response error");
+            const data = await response.json();
+            locationsData = data.provinces || [];
+            initCascadingDropdowns("per");
+            initCascadingDropdowns("temp");
+        } catch (error) {
+            console.error("Error loading locations_en.json:", error);
+        }
+    }
+
+    // Helper function to populate <select> options
+    function populateDropdown(selectElement, data, placeholderText) {
+        selectElement.innerHTML = `<option value="">${placeholderText}</option>`;
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.name; // Using name as value for the form submission
+            option.textContent = item.name;
+            selectElement.appendChild(option);
+        });
+        selectElement.disabled = false;
+    }
+
+    // Helper to clear and disable dependent dropdowns
+    function resetDropdowns(...selectElements) {
+        selectElements.forEach(el => {
+            el.innerHTML = `<option value="">Select Option</option>`;
+            el.disabled = true;
+        });
+    }
+
+    // Function to attach cascading logic
+    function initCascadingDropdowns(prefix) {
+        const provinceSelect = document.getElementById(`${prefix}Province`);
+        const districtSelect = document.getElementById(`${prefix}District`);
+        const municipalitySelect = document.getElementById(`${prefix}Municipality`);
+        const wardSelect = document.getElementById(`${prefix}Ward`);
+
+        // Load Provinces initially
+        populateDropdown(provinceSelect, locationsData, "Select Province"); 
+
+        // When Province changes -> load Districts
+        provinceSelect.addEventListener("change", function() {
+            resetDropdowns(districtSelect, municipalitySelect, wardSelect);
+            if (this.value) {
+                const province = locationsData.find(p => p.name === this.value);
+                if (province && province.districts) {
+                    populateDropdown(districtSelect, province.districts, "Select District");
+                }
+            }
+        });
+
+        // When District changes -> load Municipalities
+        districtSelect.addEventListener("change", function() {
+            resetDropdowns(municipalitySelect, wardSelect);
+            if (this.value) {
+                const provinceName = provinceSelect.value;
+                const province = locationsData.find(p => p.name === provinceName);
+                if (province) {
+                    const district = province.districts.find(d => d.name === this.value);
+                    if (district && district.municipalities) {
+                        populateDropdown(municipalitySelect, district.municipalities, "Select Municipality");
+                    }
+                }
+            }
+        });
+
+        // When Municipality changes -> load Wards
+        municipalitySelect.addEventListener("change", function() {
+            resetDropdowns(wardSelect);
+            if (this.value) {
+                const provinceName = provinceSelect.value;
+                const districtName = districtSelect.value;
+                const province = locationsData.find(p => p.name === provinceName);
+                if (province) {
+                    const district = province.districts.find(d => d.name === districtName);
+                    if (district) {
+                        const municipality = district.municipalities.find(m => m.name === this.value);
+                        if (municipality && municipality.wards) {
+                            populateDropdown(wardSelect, municipality.wards, "Select Ward");
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Load locations data on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        loadLocationsData();
+    });
+
+</script>
+
+</body>
+</html>

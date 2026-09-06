@@ -125,6 +125,115 @@ class CaseController extends Controller
         }
     }
     
+    // =========================================================
+    // TIMELINE WORKFLOW ENDPOINTS
+    // =========================================================
+
+    public function verifyProfile(Request $request, $id)
+    {
+        $case = BlacklistCase::findOrFail($id);
+        
+        // Ensure only unverified cases are verified
+        if ($case->is_verified) {
+            return response()->json(['success' => false, 'message' => 'Case is already verified.'], 400);
+        }
+
+        $case->is_verified = true;
+        $case->verified_by = $request->user()->id ?? null;
+        $case->save();
+
+        // Transition from draft to checker_verified
+        $this->engine->transition($case, 'checker_verified', $request->user()->id ?? null, []);
+
+        return response()->json(['success' => true, 'data' => $case]);
+    }
+
+    public function uploadNoticeProofs(Request $request, $id)
+    {
+        $case = BlacklistCase::findOrFail($id);
+        
+        $request->validate([
+            'notice_proof' => 'required|file|mimes:pdf,jpg,png',
+            'postal_receipt' => 'nullable|file|mimes:pdf,jpg,png',
+            'email_proof' => 'nullable|file|mimes:pdf,jpg,png',
+        ]);
+
+        $noticePath = $request->file('notice_proof')->store('proofs/notice', 'public');
+        $postalPath = $request->hasFile('postal_receipt') ? $request->file('postal_receipt')->store('proofs/postal', 'public') : null;
+        $emailPath = $request->hasFile('email_proof') ? $request->file('email_proof')->store('proofs/email', 'public') : null;
+
+        $case->notice_proof_path = $noticePath;
+        $case->postal_receipt_path = $postalPath;
+        $case->email_proof_path = $emailPath;
+        
+        // Only set this once
+        if (empty($case->notice_issued_at)) {
+            $case->notice_issued_at = now();
+            // Optional: reset notice expires at if we want it strictly 45 days from upload
+            $case->notice_expires_at = now()->addDays(45);
+        }
+        
+        $case->save();
+
+        // Transition to notice_issued, then automatically to waiting_period
+        if ($case->current_stage === 'checker_verified') {
+            $case = $this->engine->transition($case, 'notice_issued', $request->user()->id ?? null, []);
+            $case = $this->engine->transition($case, 'waiting_period', $request->user()->id ?? null, []);
+        }
+
+        return response()->json(['success' => true, 'data' => $case]);
+    }
+
+    public function issueDishonourCertificate(Request $request, $id)
+    {
+        $case = BlacklistCase::findOrFail($id);
+        
+        if (empty($case->dishonour_issued_at)) {
+            $case->dishonour_issued_at = now();
+            // Set validity to exactly 6 months from issue
+            $case->dishonour_valid_until = now()->addMonths(6);
+            $case->save();
+        }
+
+        return response()->json(['success' => true, 'data' => $case]);
+    }
+
+    public function confirmBlacklisting(Request $request, $id)
+    {
+        $case = BlacklistCase::findOrFail($id);
+        
+        $request->validate([
+            'maker_notes' => 'required|string',
+        ]);
+
+        // Validation Checks
+        if (empty($case->dishonour_issued_at)) {
+            return response()->json(['success' => false, 'message' => 'Dishonour Certificate must be issued first.'], 400);
+        }
+
+        if (now() < $case->notice_expires_at) {
+            return response()->json(['success' => false, 'message' => '45-day notice period has not yet expired.'], 400);
+        }
+
+        // We check 6-month validity, but DO NOT hard block. We just log a warning/note.
+        if (now() > $case->dishonour_valid_until) {
+            // Future feature: add strict blocking here if rules change.
+            \Illuminate\Support\Facades\Log::warning("Case {$case->case_number} blacklisting initiated despite Dishonour Certificate expiring.");
+        }
+
+        $case->applicant_confirmation_received = true;
+        $case->maker_notes = $request->maker_notes;
+        $case->save();
+
+        // Transition from waiting_period to applicant_confirmed to blacklisting_initiated
+        if ($case->current_stage === 'waiting_period') {
+            $case = $this->engine->transition($case, 'applicant_confirmed', $request->user()->id ?? null, []);
+            $case = $this->engine->transition($case, 'blacklisting_initiated', $request->user()->id ?? null, ['maker_notes' => $request->maker_notes]);
+        }
+
+        return response()->json(['success' => true, 'data' => $case]);
+    }
+
     public function events($id)
     {
         $case = BlacklistCase::with('events')->findOrFail($id);

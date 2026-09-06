@@ -1422,27 +1422,100 @@
 
         </form>
 
-        <!-- ================= WORKFLOW ACTIONS ================= -->
-        <div class="card shadow-sm border-0 mb-5 bg-dark text-white">
+        <!-- ================= TARGETED CHEQUE TIMELINE ================= -->
+        <div class="card shadow-sm border-0 mb-5">
             <div class="card-body p-4">
-                <h4 class="mb-4 text-warning">Workflow Actions</h4>
-                <div class="d-flex flex-wrap gap-3">
-                    <button *ngIf="workflowState === 'draft'" class="btn btn-warning px-4" (click)="initiateWorkflow()" [attr.disabled]="!(hasPayeeData && hasPayerData && hasChequeData) ? true : null">
-                        Step 1: Initiate Workflow & Verify
-                    </button>
-                    <button *ngIf="workflowState === 'verified'" class="btn btn-info px-4" (click)="generate45DayNotice()">
-                        Step 2: Generate 45-Day Notice
-                    </button>
-                    <button *ngIf="workflowState === 'notice_generated'" class="btn btn-danger px-4" (click)="generateDishonourCertificate()">
-                        Step 3: Generate Dishonour Certificate
-                    </button>
-                    <button *ngIf="workflowState === 'dishonour_generated'" class="btn btn-success px-4" (click)="receivePhysicalApplication()">
-                        Step 4: Receive Physical Application
-                    </button>
-                    <button *ngIf="workflowState === 'application_received'" class="btn btn-primary px-4" (click)="generateNote()">
-                        Step 5: Generate Final Note (Tippani)
-                    </button>
-                    <span *ngIf="workflowState === 'note_generated'" class="badge bg-success fs-5 p-3">Workflow Completed</span>
+                <h4 class="mb-4 text-primary"><i class="bi bi-clock-history me-2"></i> Targeted Cheque Timeline</h4>
+                
+                <div class="timeline">
+                    
+                    <!-- Timeline Item 1: Verification -->
+                    <div class="timeline-item" [ngClass]="{'active': workflowState !== 'draft'}">
+                        <div class="timeline-icon" [ngClass]="workflowState !== 'draft' ? 'bg-success' : 'bg-secondary'">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h5 class="fw-bold">Checker Verification</h5>
+                            <p class="text-muted mb-2">The application must be verified by a checker before proceeding.</p>
+                            <button *ngIf="workflowState === 'draft'" class="btn btn-sm btn-outline-success" (click)="initiateWorkflow()">
+                                Verify Profile
+                            </button>
+                            <div *ngIf="workflowState !== 'draft'" class="badge bg-success">Verified</div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 2: 45-Day Notice -->
+                    <div class="timeline-item" [ngClass]="{'active': workflowState === 'checker_verified' || workflowState === 'notice_issued' || workflowState === 'waiting_period' || workflowState === 'dishonour_generated' || workflowState === 'blacklisting_initiated'}">
+                        <div class="timeline-icon" [ngClass]="(workflowState === 'checker_verified' || workflowState === 'notice_issued' || workflowState === 'waiting_period' || workflowState === 'dishonour_generated' || workflowState === 'blacklisting_initiated') ? 'bg-primary' : 'bg-secondary'">
+                            <i class="bi bi-envelope-paper"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h5 class="fw-bold">45-Day Notice Initiation</h5>
+                            <p class="text-muted mb-2">Generate the notice and upload dispatch proofs to start the 45-day waiting period.</p>
+                            
+                            <!-- Notice Generation Button -->
+                            <button *ngIf="workflowState === 'checker_verified' || workflowState === 'notice_issued'" class="btn btn-sm btn-primary mb-3" (click)="generate45DayNotice()">
+                                <i class="bi bi-file-earmark-word me-1"></i> Generate 45-Day Notice Document
+                            </button>
+                            
+                            <!-- Proofs Upload Form -->
+                            <div *ngIf="workflowState === 'checker_verified' || workflowState === 'notice_issued'" class="p-3 bg-light rounded border border-info">
+                                <h6 class="text-info fw-bold mb-3"><i class="bi bi-upload"></i> Upload Proofs</h6>
+                                <form (submit)="$event.preventDefault(); submitNoticeProofs()">
+                                    <div class="row g-2">
+                                        <div class="col-md-4">
+                                            <label class="form-label small">Notice Proof (Signed) *</label>
+                                            <input type="file" id="noticeProofInput" class="form-control form-control-sm" accept=".pdf,.jpg,.png" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small">Postal Receipt</label>
+                                            <input type="file" id="postalReceiptInput" class="form-control form-control-sm" accept=".pdf,.jpg,.png">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small">Email Proof (Optional)</label>
+                                            <input type="file" id="emailProofInput" class="form-control form-control-sm" accept=".pdf,.jpg,.png">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-success mt-3">
+                                        Save & Start 45-Day Period
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div *ngIf="workflowState === 'waiting_period' || workflowState === 'dishonour_generated' || workflowState === 'blacklisting_initiated'" class="badge bg-success">45-Day Notice Issued & Uploaded</div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 3: Dishonour Certificate -->
+                    <div class="timeline-item" [ngClass]="{'active': workflowState === 'waiting_period' || workflowState === 'dishonour_generated' || workflowState === 'blacklisting_initiated'}">
+                        <div class="timeline-icon" [ngClass]="(workflowState === 'waiting_period' || workflowState === 'dishonour_generated' || workflowState === 'blacklisting_initiated') ? 'bg-danger' : 'bg-secondary'">
+                            <i class="bi bi-file-earmark-x"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h5 class="fw-bold">Dishonour Certificate Issuance</h5>
+                            <p class="text-muted mb-2">Generate and issue the dishonour certificate.</p>
+                            <button *ngIf="workflowState === 'waiting_period'" class="btn btn-sm btn-outline-danger" (click)="generateDishonourCertificate()">
+                                <i class="bi bi-file-earmark-word me-1"></i> Generate Dishonour Certificate
+                            </button>
+                            <div *ngIf="workflowState === 'dishonour_generated' || workflowState === 'blacklisting_initiated'" class="badge bg-success">Dishonour Certificate Issued</div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 4: Blacklisting Initiation -->
+                    <div class="timeline-item" [ngClass]="{'active': workflowState === 'dishonour_generated' || workflowState === 'blacklisting_initiated'}">
+                        <div class="timeline-icon" [ngClass]="(workflowState === 'dishonour_generated' || workflowState === 'blacklisting_initiated') ? 'bg-dark' : 'bg-secondary'">
+                            <i class="bi bi-shield-lock"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h5 class="fw-bold">Final Blacklisting Processing</h5>
+                            <p class="text-muted mb-2">Review 6-month validity and applicant confirmation to finalize the case.</p>
+                            <button *ngIf="workflowState === 'dishonour_generated'" class="btn btn-sm btn-dark" (click)="initiateBlacklisting()">
+                                Initiate Blacklisting
+                            </button>
+                            <div *ngIf="workflowState === 'blacklisting_initiated'" class="badge bg-success">Blacklisting Initiated</div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

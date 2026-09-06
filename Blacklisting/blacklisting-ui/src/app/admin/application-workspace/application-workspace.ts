@@ -285,17 +285,164 @@ export class ApplicationWorkspace implements OnInit {
   
   async initiateWorkflow() {
     if (!confirm('Are you sure you want to verify and initiate this workflow?')) return;
-    this.updateWorkflowState('verified');
+    this.isSubmitting = true;
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/cases/${this.applicationId}/verify`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: JSON.stringify({})
+      });
+      const json = await res.json();
+      if (json.success) {
+        this.updateWorkflowState('checker_verified'); // Using new status mapping
+        this.fetchApplicationDetails(); // Reload
+      } else {
+        alert(json.message || 'Failed to verify');
+      }
+    } catch (e: any) {
+      alert(e.message || 'Error occurred');
+    } finally {
+      this.isSubmitting = false;
+      this.cdr.detectChanges();
+    }
   }
 
   async generate45DayNotice() {
-    if (!confirm('Generate 45-Day Notice now?')) return;
-    this.updateWorkflowState('notice_generated');
+    if (!confirm('Generate 45-Day Notice document?')) return;
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/cases/${this.applicationId}/documents/45-days-notice`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: JSON.stringify({
+          customer_address: 'System Generated',
+          branch_name: 'Main Branch',
+          payee_name: this.caseForm.get('payee.fullNameEnglish')?.value || 'N/A',
+          amount: this.caseForm.get('cheque.chequeAmount')?.value || 0,
+          amount_words: this.caseForm.get('cheque.amountWords')?.value || 'N/A',
+          cheque_number: this.caseForm.get('cheque.chequeNumber')?.value || 'N/A',
+          presentation_date_1: 'N/A',
+          presentation_date_2: 'N/A',
+          application_date: 'N/A'
+        })
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `45_Day_Notice_${this.applicationId}.docx`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        
+        // Don't change workflow state, just allow the user to upload proofs now
+        this.successMessage = "Document Generated!";
+        setTimeout(() => this.successMessage = '', 3000);
+      } else {
+        const json = await res.json();
+        alert(json.message || 'Failed to generate document');
+      }
+    } catch (e: any) {
+      alert(e.message || 'Error occurred');
+    }
+  }
+
+  // Define Proof Form globally or add a new method to submit proofs
+  async submitNoticeProofs() {
+    const fileInput = document.getElementById('noticeProofInput') as HTMLInputElement;
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      alert('Notice Proof is required');
+      return;
+    }
+    
+    this.isSubmitting = true;
+    const formData = new FormData();
+    formData.append('notice_proof', fileInput.files[0]);
+    
+    const postalInput = document.getElementById('postalReceiptInput') as HTMLInputElement;
+    if (postalInput && postalInput.files && postalInput.files.length > 0) {
+      formData.append('postal_receipt', postalInput.files[0]);
+    }
+
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/cases/${this.applicationId}/upload-notice-proofs`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: formData
+      });
+      const json = await res.json();
+      if (json.success) {
+        this.updateWorkflowState('waiting_period');
+        this.fetchApplicationDetails();
+      } else {
+        alert(json.message || 'Failed to upload proofs');
+      }
+    } catch (e: any) {
+      alert(e.message || 'Error occurred');
+    } finally {
+      this.isSubmitting = false;
+      this.cdr.detectChanges();
+    }
   }
 
   async generateDishonourCertificate() {
     if (!confirm('Generate Dishonour Certificate? Ensure 45 days have passed.')) return;
-    this.updateWorkflowState('dishonour_generated');
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/cases/${this.applicationId}/issue-dishonour`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: JSON.stringify({})
+      });
+      const json = await res.json();
+      if (json.success) {
+        this.updateWorkflowState('dishonour_generated');
+        this.fetchApplicationDetails();
+      } else {
+        alert(json.message || 'Failed to issue dishonour certificate');
+      }
+    } catch (e: any) {
+      alert(e.message || 'Error occurred');
+    }
+  }
+  
+  async initiateBlacklisting() {
+    const notes = prompt("Enter Maker Notes for Blacklisting:");
+    if (!notes) return;
+    
+    this.isSubmitting = true;
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/cases/${this.applicationId}/confirm-blacklisting`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        },
+        body: JSON.stringify({ maker_notes: notes })
+      });
+      const json = await res.json();
+      if (json.success) {
+        this.updateWorkflowState('blacklisting_initiated');
+        this.fetchApplicationDetails();
+      } else {
+        alert(json.message || 'Failed to initiate blacklisting');
+      }
+    } catch (e: any) {
+      alert(e.message || 'Error occurred');
+    } finally {
+      this.isSubmitting = false;
+      this.cdr.detectChanges();
+    }
   }
 
   async receivePhysicalApplication() {

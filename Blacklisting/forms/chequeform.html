@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cheque Details</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f5f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #333;
+        }
+
+        /* ================================
+           MAIN CARD
+        ================================= */
+
+        .main-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* ================================
+           CARD HEADER
+        ================================= */
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 22px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        /* ================================
+           BUTTONS
+        ================================= */
+
+        .btn {
+            border: 0;
+            border-radius: 6px;
+            padding: 9px 15px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #0b5ed7;
+        }
+
+        .btn-success {
+            background: #198754;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #157347;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #5c636a;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #bb2d3b;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-info {
+            background: #0dcaf0;
+            color: #000;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        /* ================================
+           CARD BODY
+        ================================= */
+
+        .card-body {
+            padding: 22px;
+        }
+
+        /* ================================
+           FORM SECTION
+        ================================= */
+
+        .form-section {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            padding-bottom: 12px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* ================================
+           ROW / COL-MD-3
+        ================================= */
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-left: -8px;
+            margin-right: -8px;
+        }
+
+        .col-md-3 {
+            width: 25%;
+            padding-left: 8px;
+            padding-right: 8px;
+            margin-bottom: 16px;
+        }
+
+        /* ================================
+           FORM ELEMENTS
+        ================================= */
+
+        .form-group {
+            width: 100%;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .form-control {
+            width: 100%;
+            height: 40px;
+            padding: 8px 11px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            background: #fff;
+            font-size: 13px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+        }
+
+        /* ================================
+           PRESENTMENT DATE BOX
+        ================================= */
+
+        .presentment-box {
+            background: #f8f9fa;
+            border: 1px dashed #cfd4da;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .presentment-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .presentment-input {
+            flex: 0 0 25%;
+        }
+
+        .presentment-action {
+            flex: 0 0 auto;
+        }
+
+        .presentment-action .btn {
+            height: 40px;
+        }
+
+        /* ================================
+           FORM FOOTER
+        ================================= */
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* ================================
+           TABLE
+        ================================= */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            color: #444;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 10px;
+            border: 1px solid #dee2e6;
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            font-size: 12px;
+            padding: 11px 10px;
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .empty-row {
+            text-align: center !important;
+            color: #888;
+            padding: 25px !important;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        /* ================================
+           BADGE
+        ================================= */
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: #e7f1ff;
+            color: #0d6efd;
+            font-size: 11px;
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================= */
+
+        @media (max-width: 992px) {
+
+            .col-md-3 {
+                width: 50%;
+            }
+
+            .presentment-input {
+                flex: 1;
+            }
+
+        }
+
+        @media (max-width: 576px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .card-header {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .col-md-3 {
+                width: 100%;
+            }
+
+            .presentment-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .presentment-input {
+                width: 100%;
+            }
+
+            .presentment-action {
+                width: 100%;
+            }
+
+            .presentment-action .btn {
+                width: 100%;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+
+        /* ================================
+           HIDE FORM
+        ================================= */
+
+        #chequeFormSection {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<!-- =========================================================
+     CHEQUE DETAILS CARD
+========================================================== -->
+
+<div class="main-card">
+
+    <!-- CARD HEADER -->
+
+    <div class="card-header">
+
+        <h5 class="card-title">
+            Cheque Details
+        </h5>
+
+        <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            id="addChequeBtn"
+        >
+            + Add Details
+        </button>
+
+    </div>
+
+
+    <!-- CARD BODY -->
+
+    <div class="card-body">
+
+
+        <!-- =================================================
+             CHEQUE FORM
+        ================================================== -->
+
+        <div id="chequeFormSection">
+
+            <form id="chequeForm">
+
+
+                <!-- =========================================
+                     CHEQUE INFORMATION
+                ========================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+                        Cheque Information
+                    </div>
+
+
+                    <div class="row">
+
+
+                        <!-- Account Holder Name -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Account Holder Name
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="accountHolderName"
+                                placeholder="Enter account holder name"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- Account Number -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Account Number
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="accountNumber"
+                                placeholder="Enter account number"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- Cheque Number -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Cheque Number
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="chequeNumber"
+                                placeholder="Enter cheque number"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- Cheque Date -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Cheque Date
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="date"
+                                class="form-control"
+                                id="chequeDate"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- Cheque Amount -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Cheque Amount
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="chequeAmount"
+                                placeholder="0.00"
+                                min="0"
+                                step="0.01"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- Cheque Amount Words -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Cheque Amount in Words
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="chequeAmountWords"
+                                placeholder="Enter amount in words"
+                            >
+
+                        </div>
+
+
+                        <!-- Payee Name -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Payee Name
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="payeeName"
+                                placeholder="Enter payee name"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     PRESENTMENT DATE
+                ========================================== -->
+
+                <div class="form-section">
+
+                    <div class="form-section-title">
+
+                        <div style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            gap:15px;
+                        ">
+
+                            <div>
+                                Presentment Dates
+                            </div>
+
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-sm"
+                                id="addPresentmentDateBtn"
+                            >
+                                + Add Presentment Date
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="presentment-box">
+
+                        <div id="presentmentDatesContainer">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     FORM ACTION
+                ========================================== -->
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="cancelChequeBtn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-success"
+                    >
+                        Save Cheque
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+        <!-- =================================================
+             SUMMARY TABLE
+        ================================================== -->
+
+        <div class="table-wrapper" id="summaryTableContainer" style="display: none;">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            #
+                        </th>
+
+                        <th>
+                            Account Name
+                        </th>
+
+                        <th>
+                            Account Number
+                        </th>
+
+                        <th>
+                            Cheque Number
+                        </th>
+
+                        <th>
+                            Amount
+                        </th>
+
+                        <th>
+                            Payee Name
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="chequeTableBody">
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="empty-row"
+                        >
+                            No cheque details added yet.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+    /* ========================================================
+       CHEQUE DATA
+    ========================================================= */
+
+    let chequeList = [];
+
+    let editChequeIndex = -1;
+
+
+    /* ========================================================
+       ADD CHEQUE BUTTON
+    ========================================================= */
+
+    document
+        .getElementById("addChequeBtn")
+        .addEventListener("click", function () {
+
+            editChequeIndex = -1;
+
+            resetChequeForm();
+
+            document
+                .getElementById("chequeFormSection")
+                .style.display = "block";
+
+            addPresentmentDate();
+
+            document
+                .getElementById("chequeFormSection")
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        });
+
+
+    /* ========================================================
+       ADD PRESENTMENT DATE
+    ========================================================= */
+
+    document
+        .getElementById("addPresentmentDateBtn")
+        .addEventListener("click", function () {
+
+            addPresentmentDate();
+
+        });
+
+
+    function addPresentmentDate(value = "") {
+
+        const container =
+            document.getElementById(
+                "presentmentDatesContainer"
+            );
+
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "presentment-row";
+
+
+        row.innerHTML = `
+
+            <div class="presentment-input">
+
+                <label class="form-label">
+                    Presentment Date
+                </label>
+
+                <input
+                    type="date"
+                    class="form-control presentment-date"
+                    value="${value}"
+                >
+
+            </div>
+
+
+            <div class="presentment-action">
+
+                <button
+                    type="button"
+                    class="btn btn-danger btn-sm remove-date"
+                >
+                    Remove
+                </button>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(row);
+
+
+        row
+            .querySelector(".remove-date")
+            .addEventListener(
+                "click",
+                function () {
+
+                    row.remove();
+
+
+                    /*
+                     * Keep at least one date field
+                     */
+
+                    const rows =
+                        document.querySelectorAll(
+                            ".presentment-row"
+                        );
+
+
+                    if (rows.length === 0) {
+
+                        addPresentmentDate();
+
+                    }
+
+                }
+            );
+
+    }
+
+
+    /* ========================================================
+       SAVE CHEQUE
+    ========================================================= */
+
+    document
+        .getElementById("chequeForm")
+        .addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+
+            const presentmentDates = [];
+
+
+            document
+                .querySelectorAll(".presentment-date")
+                .forEach(function (input) {
+
+                    if (input.value) {
+
+                        presentmentDates.push(
+                            input.value
+                        );
+
+                    }
+
+                });
+
+
+            if (presentmentDates.length === 0) {
+
+                alert(
+                    "Please add at least one presentment date."
+                );
+
+                return;
+
+            }
+
+
+            const cheque = {
+
+                accountHolderName:
+                    document.getElementById(
+                        "accountHolderName"
+                    ).value.trim(),
+
+                accountNumber:
+                    document.getElementById(
+                        "accountNumber"
+                    ).value.trim(),
+
+                chequeNumber:
+                    document.getElementById(
+                        "chequeNumber"
+                    ).value.trim(),
+
+                chequeDate:
+                    document.getElementById(
+                        "chequeDate"
+                    ).value,
+
+                chequeAmount:
+                    document.getElementById(
+                        "chequeAmount"
+                    ).value,
+
+                chequeAmountWords:
+                    document.getElementById(
+                        "chequeAmountWords"
+                    ).value.trim(),
+
+                payeeName:
+                    document.getElementById(
+                        "payeeName"
+                    ).value.trim(),
+
+                presentmentDates:
+                    presentmentDates
+
+            };
+
+
+            /* ================================================
+               EDIT
+            ================================================= */
+
+            if (editChequeIndex !== -1) {
+
+                chequeList[
+                    editChequeIndex
+                ] = cheque;
+
+            }
+
+            /* ================================================
+               ADD
+            ================================================= */
+
+            else {
+
+                chequeList.push(cheque);
+
+            }
+
+
+            editChequeIndex = -1;
+
+            renderChequeTable();
+
+            resetChequeForm();
+
+            document
+                .getElementById("chequeFormSection")
+                .style.display = "none";
+
+        });
+
+
+    /* ========================================================
+       RENDER TABLE
+    ========================================================= */
+
+    function renderChequeTable() {
+
+        const tbody =
+            document.getElementById(
+                "chequeTableBody"
+            );
+
+
+        tbody.innerHTML = "";
+
+
+        if (chequeList.length === 0) {
+
+            document.getElementById("summaryTableContainer").style.display = "none";
+            return;
+
+        }
+        
+        document.getElementById("summaryTableContainer").style.display = "block";
+
+        chequeList.forEach(
+            function (cheque, index) {
+
+
+                const dates =
+                    cheque.presentmentDates
+                        .map(function (date) {
+
+                            return formatDate(date);
+
+                        })
+                        .join("<br>");
+
+
+                tbody.innerHTML += `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${escapeHtml(
+                                    cheque.accountHolderName
+                                )}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                cheque.accountNumber
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                cheque.chequeNumber
+                            )}
+                        </td>
+
+                        <td>
+                            ${formatAmount(
+                                cheque.chequeAmount
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                cheque.payeeName
+                            )}
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-info btn-sm"
+                                    onclick="viewCheque(${index})"
+                                >
+                                    View
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-warning btn-sm"
+                                    onclick="editCheque(${index})"
+                                >
+                                    Edit
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="deleteCheque(${index})"
+                                >
+                                    Delete
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+    }
+
+
+    /* ========================================================
+       VIEW CHEQUE
+    ========================================================= */
+
+    function viewCheque(index) {
+
+        const cheque =
+            chequeList[index];
+
+
+        const dates =
+            cheque.presentmentDates
+                .map(function (date) {
+
+                    return formatDate(date);
+
+                })
+                .join(", ");
+
+
+        alert(
+
+            "Account Holder Name: " +
+            cheque.accountHolderName +
+
+            "\nAccount Number: " +
+            cheque.accountNumber +
+
+            "\nCheque Number: " +
+            cheque.chequeNumber +
+
+            "\nCheque Date: " +
+            formatDate(
+                cheque.chequeDate
+            ) +
+
+            "\nCheque Amount: " +
+            formatAmount(
+                cheque.chequeAmount
+            ) +
+
+            "\nAmount in Words: " +
+            (
+                cheque.chequeAmountWords ||
+                "-"
+            ) +
+
+            "\nPayee Name: " +
+            cheque.payeeName +
+
+            "\nPresentment Dates: " +
+            dates
+
+        );
+
+    }
+
+
+    /* ========================================================
+       EDIT CHEQUE
+    ========================================================= */
+
+    function editCheque(index) {
+
+        const cheque =
+            chequeList[index];
+
+
+        editChequeIndex = index;
+
+
+        document.getElementById(
+            "accountHolderName"
+        ).value =
+            cheque.accountHolderName || "";
+
+
+        document.getElementById(
+            "accountNumber"
+        ).value =
+            cheque.accountNumber || "";
+
+
+        document.getElementById(
+            "chequeNumber"
+        ).value =
+            cheque.chequeNumber || "";
+
+
+        document.getElementById(
+            "chequeDate"
+        ).value =
+            cheque.chequeDate || "";
+
+
+        document.getElementById(
+            "chequeAmount"
+        ).value =
+            cheque.chequeAmount || "";
+
+
+        document.getElementById(
+            "chequeAmountWords"
+        ).value =
+            cheque.chequeAmountWords || "";
+
+
+        document.getElementById(
+            "payeeName"
+        ).value =
+            cheque.payeeName || "";
+
+
+        /*
+         * Clear presentment dates
+         */
+
+        document.getElementById(
+            "presentmentDatesContainer"
+        ).innerHTML = "";
+
+
+        /*
+         * Load existing dates
+         */
+
+        if (
+            cheque.presentmentDates &&
+            cheque.presentmentDates.length > 0
+        ) {
+
+            cheque.presentmentDates.forEach(
+                function (date) {
+
+                    addPresentmentDate(date);
+
+                }
+            );
+
+        }
+
+        else {
+
+            addPresentmentDate();
+
+        }
+
+
+        document
+            .getElementById("chequeFormSection")
+            .style.display = "block";
+
+
+        document
+            .getElementById("chequeFormSection")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+
+    /* ========================================================
+       DELETE CHEQUE
+    ========================================================= */
+
+    function deleteCheque(index) {
+
+        if (
+            confirm(
+                "Are you sure you want to delete this cheque?"
+            )
+        ) {
+
+            chequeList.splice(
+                index,
+                1
+            );
+
+            renderChequeTable();
+
+        }
+
+    }
+
+
+    /* ========================================================
+       CANCEL
+    ========================================================= */
+
+    document
+        .getElementById("cancelChequeBtn")
+        .addEventListener("click", function () {
+
+            resetChequeForm();
+
+            editChequeIndex = -1;
+
+            document
+                .getElementById("chequeFormSection")
+                .style.display = "none";
+
+        });
+
+
+    /* ========================================================
+       RESET FORM
+    ========================================================= */
+
+    function resetChequeForm() {
+
+        document
+            .getElementById("chequeForm")
+            .reset();
+
+
+        document
+            .getElementById(
+                "presentmentDatesContainer"
+            )
+            .innerHTML = "";
+
+    }
+
+
+    /* ========================================================
+       DATE FORMAT
+    ========================================================= */
+
+    function formatDate(date) {
+
+        if (!date) {
+            return "-";
+        }
+
+
+        const d =
+            new Date(date);
+
+
+        if (
+            isNaN(
+                d.getTime()
+            )
+        ) {
+            return date;
+        }
+
+
+        return d.toLocaleDateString(
+            "en-GB"
+        );
+
+    }
+
+
+    /* ========================================================
+       AMOUNT FORMAT
+    ========================================================= */
+
+    function formatAmount(amount) {
+
+        if (
+            amount === "" ||
+            amount === null ||
+            amount === undefined
+        ) {
+            return "-";
+        }
+
+
+        return Number(amount)
+            .toLocaleString(
+                "en-IN",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
+
+    }
+
+
+    /* ========================================================
+       ESCAPE HTML
+    ========================================================= */
+
+    function escapeHtml(value) {
+
+        if (!value) {
+            return "-";
+        }
+
+
+        return String(value)
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /* ========================================================
+       INITIAL TABLE
+    ========================================================= */
+
+    renderChequeTable();
+
+</script>
+
+</body>
+</html>

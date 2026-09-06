@@ -12,6 +12,9 @@ class BlacklistCase extends Model
         'current_deadline' => 'datetime',
         'total_liability' => 'decimal:2',
         'paid_amount' => 'decimal:2',
+        'notice_issued_at' => 'datetime',
+        'dishonour_issued_at' => 'datetime',
+        'dishonour_valid_until' => 'datetime',
     ];
 
     protected static function boot()
@@ -34,10 +37,23 @@ class BlacklistCase extends Model
                             'version' => 1,
                             'effective_date' => now()->toDateString(),
                             'config' => [
-                                'stages' => ['draft', '45_days_notice', 'cib_submitted', 'blacklisted'],
+                                'stages' => [
+                                    'draft', 
+                                    'checker_verified', 
+                                    'notice_issued', 
+                                    'dishonour_issued', 
+                                    'waiting_period', 
+                                    'applicant_confirmed', 
+                                    'blacklisting_initiated',
+                                    'cib_submitted', 
+                                    'blacklisted'
+                                ],
                                 'transitions' => [
-                                    ['from' => 'draft', 'to' => '45_days_notice'],
-                                    ['from' => '45_days_notice', 'to' => 'cib_submitted'],
+                                    ['from' => 'draft', 'to' => 'checker_verified'],
+                                    ['from' => 'checker_verified', 'to' => 'notice_issued'],
+                                    ['from' => 'notice_issued', 'to' => 'waiting_period'],
+                                    ['from' => 'waiting_period', 'to' => 'blacklisting_initiated'],
+                                    ['from' => 'blacklisting_initiated', 'to' => 'cib_submitted'],
                                     ['from' => 'cib_submitted', 'to' => 'blacklisted']
                                 ]
                             ]

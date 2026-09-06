@@ -1,0 +1,12 @@
+{
+  "name": "operation-hub-blacklisting",
+  "version": "1.0.0",
+  "description": "Blacklisting Module for Operation HUB",
+  "scripts": {
+    "dev": "npm run clean && concurrently -k -c \"bgBlue.bold,bgMagenta.bold\" -n \"LARAVEL,ANGULAR\" \"cd blacklisting-api && /Applications/PHP8/bin/php artisan serve\" \"cd blacklisting-ui && npm start\"",
+    "clean": "cd blacklisting-api && /Applications/PHP8/bin/php artisan optimize:clear && rm -f storage/framework/sessions/*"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -42,6 +42,12 @@ Route::prefix('api')->group(function () {
     Route::post('/cases/{id}/documents/dishonour-certificate', [CaseController::class, 'generateDishonourDocument']);
     Route::post('/cases/{id}/documents/cover-note', [CaseController::class, 'generateCoverNoteDocument']);
     
+    // Timeline endpoints
+    Route::post('/cases/{id}/verify', [CaseController::class, 'verifyProfile']);
+    Route::post('/cases/{id}/upload-notice-proofs', [CaseController::class, 'uploadNoticeProofs']);
+    Route::post('/cases/{id}/issue-dishonour', [CaseController::class, 'issueDishonourCertificate']);
+    Route::post('/cases/{id}/confirm-blacklisting', [CaseController::class, 'confirmBlacklisting']);
+    
     // Master Data Routes (SOL Branches & Nepal Locations)
     Route::get('/sol-branches', function () {
         return response()->json(['success' => true, 'data' => \Illuminate\Support\Facades\DB::table('sol_branches')->where('is_active', 1)->get()]);
